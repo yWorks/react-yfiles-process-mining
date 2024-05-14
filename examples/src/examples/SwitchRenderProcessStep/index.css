@@ -1,0 +1,16 @@
+.render-process-step-gauge {
+    background-color: #ffffff;
+    border: 2px solid #cdcdcd;
+    border-radius: 7px;
+    box-sizing: border-box;
+}
+
+.render-process-step-text {
+    background-color: #494949;
+    color: #d0d0d0;
+    border-radius: 7px;
+    padding: 10px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+}

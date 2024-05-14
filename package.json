@@ -1,0 +1,71 @@
+{
+  "name": "@yworks/react-yfiles-process-mining",
+  "version": "1.0.0",
+  "author": {
+    "name": "yFiles for HTML team @ yWorks GmbH",
+    "email": "yfileshtml@yworks.com"
+  },
+  "description": "yFiles React Process Mining Component - A powerful and versatile React component based on the yFiles library, allows you to seamlessly incorporate dynamic and interactive process mining visualizations into your applications.",
+  "keywords": [
+    "react",
+    "yfiles",
+    "javascript",
+    "typescript",
+    "library",
+    "graph",
+    "diagram",
+    "process mining",
+    "interactive",
+    "heatmap",
+    "animation",
+    "events",
+    "discovery",
+    "temporal data",
+    "event log"
+  ],
+  "homepage": "https://docs.yworks.com/react-yfiles-process-mining",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yWorks/react-yfiles-process-mining.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yWorks/react-yfiles-process-mining/issues"
+  },
+  "license": "SEE LICENSE IN ./LICENSE",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./dist/index.css": "./dist/index.css"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "tsc": "tsc",
+    "dev": "tsup --watch --sourcemap --dts --format esm src/index.ts && api-extractor run --local",
+    "build": "tsup --clean --dts --format esm src/index.ts && api-extractor run --local"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "yfiles": "^26.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@microsoft/api-extractor": "^7.39.1",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "@yworks/react-yfiles-core": "^2.0.0"
+  },
+  "files": [
+    "LICENSE",
+    "dist",
+    "package.json",
+    "README.md"
+  ]
+}

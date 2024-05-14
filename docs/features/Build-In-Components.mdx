@@ -1,0 +1,98 @@
+---
+title: Built-In Components
+section: 10
+tags: []
+showRightSideBar: false
+---
+import Playground from '../../components/Playground-Process-Mining.astro'
+import TypeLink from '../../components/TypeLink.astro'
+
+# Built-In Components
+
+There are optional components available to enhance the interaction with the process mining diagram, which can be added as children of the process mining component:
+<ul className="list-disc ml-4">
+    <li>**<TypeLink type="Overview" />**: Presents a simplified view of the entire graph along with the current viewport.</li>
+    <li>**<TypeLink type="Controls" />**: Features a toolbar with buttons to adjust the viewport.</li>
+</ul>
+
+
+<Playground
+  code={`
+    function App () {
+      return (
+        <ProcessMining eventLog={data}>
+          <Overview></Overview>
+          <Controls buttons={DefaultControlButtons}></Controls>
+        </ProcessMining>
+      )
+    }
+  `}
+  data={`[
+    {"caseId": 1, "activity": "Admission", "timestamp": 0.0, "duration": 0.2},
+    {"caseId": 1, "activity": "Initial Assessment", "timestamp": 0.2, "duration": 0.5},
+    {"caseId": 1, "activity": "Blood Tests", "timestamp": 0.9, "duration": 0.3},
+    {"caseId": 1, "activity": "X-ray", "timestamp": 1.4, "duration": 0.6},
+    {"caseId": 1, "activity": "Consultation", "timestamp": 2.1, "duration": 0.4},
+    {"caseId": 1, "activity": "Treatment", "timestamp": 2.6, "duration": 1.2},
+    {"caseId": 1, "activity": "Discharge", "timestamp": 3.8, "duration": 0.2},
+    {"caseId": 2, "activity": "Admission", "timestamp": 0.0, "duration": 0.3},
+    {"caseId": 2, "activity": "Initial Assessment", "timestamp": 0.3, "duration": 0.7},
+    {"caseId": 2, "activity": "Blood Tests", "timestamp": 1.1, "duration": 0.4},
+    {"caseId": 2, "activity": "Consultation", "timestamp": 1.8, "duration": 0.5},
+    {"caseId": 2, "activity": "Treatment", "timestamp": 2.5, "duration": 1.8},
+    {"caseId": 2, "activity": "Discharge", "timestamp": 4.3, "duration": 0.2},
+    {"caseId": 3, "activity": "Admission", "timestamp": 0.0, "duration": 0.1},
+    {"caseId": 3, "activity": "Initial Assessment", "timestamp": 0.1, "duration": 0.6},
+    {"caseId": 3, "activity": "X-ray", "timestamp": 0.9, "duration": 0.4},
+    {"caseId": 3, "activity": "Consultation", "timestamp": 1.5, "duration": 0.7},
+    {"caseId": 3, "activity": "Treatment", "timestamp": 2.3, "duration": 1.5},
+    {"caseId": 3, "activity": "Discharge", "timestamp": 3.8, "duration": 0.2},
+    {"caseId": 4, "activity": "Admission", "timestamp": 0.0, "duration": 0.2},
+    {"caseId": 4, "activity": "Initial Assessment", "timestamp": 0.2, "duration": 0.8},
+    {"caseId": 4, "activity": "Blood Tests", "timestamp": 1.1, "duration": 0.3},
+    {"caseId": 4, "activity": "Consultation", "timestamp": 1.7, "duration": 0.6},
+    {"caseId": 4, "activity": "X-ray", "timestamp": 2.4, "duration": 0.9},
+    {"caseId": 4, "activity": "Treatment", "timestamp": 3.4, "duration": 1.3},
+    {"caseId": 4, "activity": "Discharge", "timestamp": 4.8, "duration": 0.2},
+    {"caseId": 5, "activity": "Admission", "timestamp": 0.0, "duration": 0.1},
+    {"caseId": 5, "activity": "Initial Assessment", "timestamp": 0.1, "duration": 0.5},
+    {"caseId": 5, "activity": "Consultation", "timestamp": 0.8, "duration": 0.4},
+    {"caseId": 5, "activity": "Treatment", "timestamp": 1.3, "duration": 1.0},
+    {"caseId": 5, "activity": "Discharge", "timestamp": 2.8, "duration": 0.2},
+    {"caseId": 6, "activity": "Admission", "timestamp": 0.0, "duration": 0.3},
+    {"caseId": 6, "activity": "Initial Assessment", "timestamp": 0.3, "duration": 0.6},
+    {"caseId": 6, "activity": "Blood Tests", "timestamp": 1.0, "duration": 0.4},
+    {"caseId": 6, "activity": "X-ray", "timestamp": 1.6, "duration": 0.8},
+    {"caseId": 6, "activity": "Consultation", "timestamp": 2.5, "duration": 0.5},
+    {"caseId": 6, "activity": "Treatment", "timestamp": 3.2, "duration": 1.3},
+    {"caseId": 6, "activity": "Discharge", "timestamp": 4.7, "duration": 0.2},
+    {"caseId": 7, "activity": "Admission", "timestamp": 0.0, "duration": 0.2},
+    {"caseId": 7, "activity": "Initial Assessment", "timestamp": 0.2, "duration": 0.7},
+    {"caseId": 7, "activity": "Blood Tests", "timestamp": 0.9, "duration": 0.3},
+    {"caseId": 7, "activity": "X-ray", "timestamp": 1.5, "duration": 0.6},
+    {"caseId": 7, "activity": "Consultation", "timestamp": 2.3, "duration": 0.4},
+    {"caseId": 7, "activity": "Treatment", "timestamp": 2.8, "duration": 1.2},
+    {"caseId": 7, "activity": "Discharge", "timestamp": 4.0, "duration": 0.2},
+    {"caseId": 8, "activity": "Admission", "timestamp": 0.0, "duration": 0.1},
+    {"caseId": 8, "activity": "Initial Assessment", "timestamp": 0.1, "duration": 0.5},
+    {"caseId": 8, "activity": "Blood Tests", "timestamp": 0.7, "duration": 0.4},
+    {"caseId": 8, "activity": "X-ray", "timestamp": 1.3, "duration": 0.7},
+    {"caseId": 8, "activity": "Consultation", "timestamp": 2.1, "duration": 0.6},
+    {"caseId": 8, "activity": "Treatment", "timestamp": 2.8, "duration": 1.0},
+    {"caseId": 8, "activity": "Discharge", "timestamp": 3.8, "duration": 0.2},
+    {"caseId": 9, "activity": "Admission", "timestamp": 0.0, "duration": 0.2},
+    {"caseId": 9, "activity": "Initial Assessment", "timestamp": 0.2, "duration": 0.6},
+    {"caseId": 9, "activity": "Blood Tests", "timestamp": 0.9, "duration": 0.3},
+    {"caseId": 9, "activity": "X-ray", "timestamp": 1.4, "duration": 0.5},
+    {"caseId": 9, "activity": "Consultation", "timestamp": 2.0, "duration": 0.7},
+    {"caseId": 9, "activity": "Treatment", "timestamp": 2.8, "duration": 1.5},
+    {"caseId": 9, "activity": "Discharge", "timestamp": 4.3, "duration": 0.2},
+    {"caseId": 10, "activity": "Admission", "timestamp": 0.0, "duration": 0.3},
+    {"caseId": 10, "activity": "Initial Assessment", "timestamp": 0.3, "duration": 0.7},
+    {"caseId": 10, "activity": "Blood Tests", "timestamp": 1.0, "duration": 0.4},
+    {"caseId": 10, "activity": "Consultation", "timestamp": 1.7, "duration": 0.5},
+    {"caseId": 10, "activity": "Treatment", "timestamp": 2.3, "duration": 1.8},
+    {"caseId": 10, "activity": "Discharge", "timestamp": 4.1, "duration": 0.2}
+  ]`
+}
+/>

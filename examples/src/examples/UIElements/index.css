@@ -1,0 +1,19 @@
+.tooltip {
+    padding: 10px;
+    background: #ffffff;
+    border: 2px solid #2b2b2b;
+    border-radius: 5px;
+    font-family: Roboto, Arial, sans-serif;
+}
+
+.popup {
+    padding: 10px;
+    background: #ff6347;
+    color: #ffffff;
+    border-radius: 5px;
+    font-family: Roboto, Arial, sans-serif;
+}
+
+.apply-layout {
+    background: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='16px' height='16px' viewBox='2 2 12 12' enable-background='new 0 0 16 16' xml:space='preserve'%3E%3Cg%3E%3Cpolygon fill='%23666666' points='5,4 5,12 12,8 '/%3E%3C/g%3E%3C/svg%3E") 50% 50% no-repeat;
+}

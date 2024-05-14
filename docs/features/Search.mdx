@@ -1,0 +1,170 @@
+---
+title: Search
+section: 8
+tags: []
+showRightSideBar: false
+---
+import Playground from '../../components/Playground-Process-Mining.astro'
+import TypeLink from '../../components/TypeLink.astro'
+
+# Search
+
+The component introduces a search feature which offers a way to focus on specific elements within the chart.
+By binding a needle object or string, items fitting the search criteria are highlighted.
+
+To further tailor the search functionality, developers can customize the process by registering a function to the
+<TypeLink type="ProcessMining" member="onSearch"/> event, which returns a boolean value indicating if the search was
+successful for the given item.
+
+<Playground
+    code={`
+      function ProcessMiningWrapper() {
+        const processMiningContext = useProcessMiningContext()
+
+        const [searchQuery, setSearchQuery] = useState('')
+        // zoom to the match element
+        const onSearchEnter = (event: React.KeyboardEvent) => {
+          if (event.key === 'Enter') {
+            processMiningContext.zoomTo(processMiningContext.getSearchHits())
+          }
+        }
+        return (
+          <>
+            <ProcessMining
+              eventLog={data}
+              searchNeedle={searchQuery}
+              onSearch={(data: ProcessStep, searchQuery: string) => data.label?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false }
+            ></ProcessMining>
+            <input
+              className="search"
+              type={'search'}
+              placeholder="Search..."
+              onChange={event => {
+                setSearchQuery(event.target.value)
+              }}
+              onKeyDown={onSearchEnter}
+            />
+          </>
+        )
+      }
+
+      function App () {
+        return (
+          <ProcessMiningProvider>
+            <ProcessMiningWrapper></ProcessMiningWrapper>
+          </ProcessMiningProvider>
+        )
+      }`
+    }
+    data={`
+      [
+        {"caseId": 1, "activity": "Order Received", "timestamp": 0.0, "duration": 0.5},
+        {"caseId": 1, "activity": "Material Procurement", "timestamp": 0.6, "duration": 1.2},
+        {"caseId": 1, "activity": "Quality Inspection - Raw Materials", "timestamp": 1.8, "duration": 0.7},
+        {"caseId": 1, "activity": "Production Planning", "timestamp": 2.5, "duration": 0.9},
+        {"caseId": 1, "activity": "Machine Setup", "timestamp": 3.4, "duration": 1.5},
+        {"caseId": 1, "activity": "Manufacturing", "timestamp": 5.0, "duration": 4.0},
+        {"caseId": 1, "activity": "Quality Inspection - Final Product", "timestamp": 9.0, "duration": 0.8},
+        {"caseId": 1, "activity": "Packaging", "timestamp": 9.8, "duration": 1.2},
+        {"caseId": 1, "activity": "Shipping", "timestamp": 11.0, "duration": 1.5},
+        {"caseId": 1, "activity": "Delivery Confirmation", "timestamp": 12.5, "duration": 0.0},
+        {"caseId": 2, "activity": "Order Received", "timestamp": 0.0, "duration": 0.7},
+        {"caseId": 2, "activity": "Material Procurement", "timestamp": 0.8, "duration": 1.4},
+        {"caseId": 2, "activity": "Quality Inspection - Raw Materials", "timestamp": 2.2, "duration": 0.5},
+        {"caseId": 2, "activity": "Production Planning", "timestamp": 2.7, "duration": 1.0},
+        {"caseId": 2, "activity": "Machine Setup", "timestamp": 3.7, "duration": 1.8},
+        {"caseId": 2, "activity": "Manufacturing", "timestamp": 5.5, "duration": 5.2},
+        {"caseId": 2, "activity": "Quality Inspection - Final Product", "timestamp": 10.7, "duration": 0.9},
+        {"caseId": 2, "activity": "Packaging", "timestamp": 11.6, "duration": 1.5},
+        {"caseId": 2, "activity": "Shipping", "timestamp": 13.1, "duration": 1.8},
+        {"caseId": 2, "activity": "Delivery Confirmation", "timestamp": 14.9, "duration": 0.0},
+        {"caseId": 3, "activity": "Order Received", "timestamp": 0.0, "duration": 0.6},
+        {"caseId": 3, "activity": "Material Procurement", "timestamp": 0.7, "duration": 1.1},
+        {"caseId": 3, "activity": "Quality Inspection - Raw Materials", "timestamp": 1.8, "duration": 0.8},
+        {"caseId": 3, "activity": "Production Planning", "timestamp": 2.6, "duration": 0.9},
+        {"caseId": 3, "activity": "Machine Setup", "timestamp": 3.5, "duration": 1.3},
+        {"caseId": 3, "activity": "Manufacturing", "timestamp": 4.8, "duration": 4.5},
+        {"caseId": 3, "activity": "Quality Inspection - Final Product", "timestamp": 9.3, "duration": 1.0},
+        {"caseId": 3, "activity": "Packaging", "timestamp": 10.3, "duration": 1.4},
+        {"caseId": 3, "activity": "Shipping", "timestamp": 11.7, "duration": 1.7},
+        {"caseId": 3, "activity": "Delivery Confirmation", "timestamp": 13.4, "duration": 0.0},
+        {"caseId": 4, "activity": "Order Received", "timestamp": 0.0, "duration": 0.8},
+        {"caseId": 4, "activity": "Material Procurement", "timestamp": 0.9, "duration": 1.3},
+        {"caseId": 4, "activity": "Quality Inspection - Raw Materials", "timestamp": 2.2, "duration": 0.6},
+        {"caseId": 4, "activity": "Production Planning", "timestamp": 2.8, "duration": 1.2},
+        {"caseId": 4, "activity": "Machine Setup", "timestamp": 4.0, "duration": 2.0},
+        {"caseId": 4, "activity": "Manufacturing", "timestamp": 6.0, "duration": 5.7},
+        {"caseId": 4, "activity": "Quality Inspection - Final Product", "timestamp": 11.7, "duration": 1.2},
+        {"caseId": 4, "activity": "Packaging", "timestamp": 12.9, "duration": 1.8},
+        {"caseId": 4, "activity": "Shipping", "timestamp": 14.7, "duration": 2.1},
+        {"caseId": 4, "activity": "Delivery Confirmation", "timestamp": 16.8, "duration": 0.0},
+        {"caseId": 5, "activity": "Order Received", "timestamp": 0.0, "duration": 0.9},
+        {"caseId": 5, "activity": "Material Procurement", "timestamp": 0.9, "duration": 1.5},
+        {"caseId": 5, "activity": "Quality Inspection - Raw Materials", "timestamp": 2.4, "duration": 0.7},
+        {"caseId": 5, "activity": "Production Planning", "timestamp": 3.1, "duration": 1.1},
+        {"caseId": 5, "activity": "Machine Setup", "timestamp": 4.2, "duration": 1.7},
+        {"caseId": 5, "activity": "Manufacturing", "timestamp": 5.9, "duration": 6.2},
+        {"caseId": 5, "activity": "Quality Inspection - Final Product", "timestamp": 12.1, "duration": 0.8},
+        {"caseId": 5, "activity": "Packaging", "timestamp": 12.9, "duration": 1.6},
+        {"caseId": 5, "activity": "Shipping", "timestamp": 14.5, "duration": 1.9},
+        {"caseId": 5, "activity": "Delivery Confirmation", "timestamp": 16.4, "duration": 0.0},
+        {"caseId": 6, "activity": "Order Received", "timestamp": 0.0, "duration": 1.0},
+        {"caseId": 6, "activity": "Material Procurement", "timestamp": 1.1, "duration": 1.6},
+        {"caseId": 6, "activity": "Quality Inspection - Raw Materials", "timestamp": 2.7, "duration": 0.8},
+        {"caseId": 6, "activity": "Production Planning", "timestamp": 3.5, "duration": 1.2},
+        {"caseId": 6, "activity": "Machine Setup", "timestamp": 4.7, "duration": 1.9},
+        {"caseId": 6, "activity": "Manufacturing", "timestamp": 6.6, "duration": 6.5},
+        {"caseId": 6, "activity": "Quality Inspection - Final Product", "timestamp": 13.1, "duration": 1.1},
+        {"caseId": 6, "activity": "Packaging", "timestamp": 14.2, "duration": 1.7},
+        {"caseId": 6, "activity": "Shipping", "timestamp": 15.9, "duration": 2.2},
+        {"caseId": 6, "activity": "Delivery Confirmation", "timestamp": 18.1, "duration": 0.0},
+        {"caseId": 7, "activity": "Order Received", "timestamp": 0.0, "duration": 0.8},
+        {"caseId": 7, "activity": "Material Procurement", "timestamp": 0.9, "duration": 1.1},
+        {"caseId": 7, "activity": "Quality Inspection - Raw Materials", "timestamp": 2.0, "duration": 0.9},
+        {"caseId": 7, "activity": "Production Planning", "timestamp": 2.9, "duration": 1.3},
+        {"caseId": 7, "activity": "Machine Setup", "timestamp": 4.2, "duration": 2.0},
+        {"caseId": 7, "activity": "Manufacturing", "timestamp": 6.2, "duration": 6.7},
+        {"caseId": 7, "activity": "Quality Inspection - Final Product", "timestamp": 12.9, "duration": 0.9},
+        {"caseId": 7, "activity": "Packaging", "timestamp": 13.8, "duration": 1.5},
+        {"caseId": 7, "activity": "Shipping", "timestamp": 15.3, "duration": 2.0},
+        {"caseId": 7, "activity": "Delivery Confirmation", "timestamp": 17.3, "duration": 0.0},
+        {"caseId": 8, "activity": "Order Received", "timestamp": 0.0, "duration": 1.1},
+        {"caseId": 8, "activity": "Material Procurement", "timestamp": 1.2, "duration": 1.5},
+        {"caseId": 8, "activity": "Quality Inspection - Raw Materials", "timestamp": 2.7, "duration": 0.6},
+        {"caseId": 8, "activity": "Production Planning", "timestamp": 3.3, "duration": 1.4},
+        {"caseId": 8, "activity": "Machine Setup", "timestamp": 4.7, "duration": 2.2},
+        {"caseId": 8, "activity": "Manufacturing", "timestamp": 7.0, "duration": 7.0},
+        {"caseId": 8, "activity": "Quality Inspection - Final Product", "timestamp": 14.0, "duration": 1.0},
+        {"caseId": 8, "activity": "Packaging", "timestamp": 15.0, "duration": 1.8},
+        {"caseId": 8, "activity": "Shipping", "timestamp": 16.8, "duration": 2.3},
+        {"caseId": 8, "activity": "Delivery Confirmation", "timestamp": 19.1, "duration": 0.0},
+        {"caseId": 9, "activity": "Order Received", "timestamp": 0.0, "duration": 0.9},
+        {"caseId": 9, "activity": "Material Procurement", "timestamp": 0.9, "duration": 1.4},
+        {"caseId": 9, "activity": "Quality Inspection - Raw Materials", "timestamp": 2.3, "duration": 0.7},
+        {"caseId": 9, "activity": "Production Planning", "timestamp": 3.0, "duration": 1.1},
+        {"caseId": 9, "activity": "Machine Setup", "timestamp": 4.1, "duration": 1.9},
+        {"caseId": 9, "activity": "Manufacturing", "timestamp": 6.0, "duration": 6.8},
+        {"caseId": 9, "activity": "Quality Inspection - Final Product", "timestamp": 12.8, "duration": 0.8},
+        {"caseId": 9, "activity": "Packaging", "timestamp": 13.6, "duration": 1.6},
+        {"caseId": 9, "activity": "Shipping", "timestamp": 15.2, "duration": 2.1},
+        {"caseId": 9, "activity": "Delivery Confirmation", "timestamp": 17.3, "duration": 0.0},
+        {"caseId": 10, "activity": "Order Received", "timestamp": 0.0, "duration": 1.0},
+        {"caseId": 10, "activity": "Material Procurement", "timestamp": 1.1, "duration": 1.6},
+        {"caseId": 10, "activity": "Quality Inspection - Raw Materials", "timestamp": 2.7, "duration": 0.8},
+        {"caseId": 10, "activity": "Production Planning", "timestamp": 3.5, "duration": 1.2},
+        {"caseId": 10, "activity": "Machine Setup", "timestamp": 4.7, "duration": 2.0},
+        {"caseId": 10, "activity": "Manufacturing", "timestamp": 6.7, "duration": 7.5},
+        {"caseId": 10, "activity": "Quality Inspection - Final Product", "timestamp": 14.2, "duration": 1.0},
+        {"caseId": 10, "activity": "Packaging", "timestamp": 15.2, "duration": 1.5},
+        {"caseId": 10, "activity": "Shipping", "timestamp": 16.7, "duration": 2.2},
+        {"caseId": 10, "activity": "Delivery Confirmation", "timestamp": 19.0, "duration": 0.0}
+      ]
+   `}
+    css={`
+      .search{
+         position: absolute;
+         top: 10px;
+         left: 10px;
+      }
+   `}
+/>

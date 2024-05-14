@@ -1,0 +1,4 @@
+{
+  "mainComponents": ["ProcessMining", "ProcessMiningProvider"],
+  "componentPropsDocText": "eventLog={data}"
+}

@@ -1,0 +1,84 @@
+---
+title: Custom Step Visualization
+section: 1
+tags: []
+showRightSideBar: false
+---
+import Playground from '../../components/Playground-Process-Mining.astro'
+import TypeLink from '../../components/TypeLink.astro'
+
+# Customizing the Step Visualization
+
+This component comes with styling and options suitable for general process mining graphs. The displayed diagram is
+extracted from an event-log and the extracted process steps provide information about an activity that is one step of
+the process.
+
+The default visualization provides the name of an activity along with a gauge that indicates the current workload at
+a process step.
+
+The visualization of the steps is highly customizable. You can specify custom React components to render the items according
+to your specific requirements. Note that to optimize performance and depending on the implementation, it might be necessary
+to use memoization for custom visualization components.
+
+<Playground
+  code={`
+function CustomProcessStep({ dataItem, timestamp }: RenderProcessStepProps) {
+  const heat = dataItem.heat?.getValue(timestamp) ?? 0
+  const normalizedHeat = Math.min(1, heat / (dataItem.capacity ?? 100))
+  return (
+    <div className="custom-process-step">
+      <div className="title">{dataItem.label}</div>
+      <div>Heat: {heat}</div>
+      <div>Capacity: {dataItem.capacity}</div>
+      <div className="gauge">
+        <RenderHeatGauge heat={normalizedHeat} size={50} />
+      </div>
+    </div>
+  )
+}
+
+function App() {
+  return <ProcessMining eventLog={data} renderProcessStep={CustomProcessStep} timestamp={12}></ProcessMining>
+}`}
+  data={`[
+  {
+    "caseId": 0,
+    "activity": "Main Processing",
+    "timestamp": 11.628603179598622,
+    "duration": 12.04434260865775148
+  },
+  {
+    "caseId": 1,
+    "activity": "Main Processing",
+    "timestamp": 12.628603179598622,
+    "duration": 14.04434260865775148
+  },
+  {
+    "caseId": 3,
+    "activity": "Main Processing",
+    "timestamp": 14.628603179598622,
+    "duration": 15.04434260865775148
+  }
+]
+`}
+  css={`.custom-process-step {
+  padding: 20px;
+  background-color: #ffffff;
+  color: #b87333;
+  border: 2px solid #b87333;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+  line-height: 1.5em;
+}
+
+.custom-process-step .title {
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+.custom-process-step .gauge {
+  margin-top: 20px;
+  text-align: center;
+}
+  `}
+/>

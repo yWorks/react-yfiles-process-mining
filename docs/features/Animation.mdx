@@ -1,0 +1,2074 @@
+---
+title: Animation
+section: 5
+tags: []
+showRightSideBar: false
+---
+import Playground from '../../components/Playground-Process-Mining.astro'
+import TypeLink from '../../components/TypeLink.astro'
+
+# Animation
+
+Animating time data composed of events with timestamps and durations offers a dynamic visualization of temporal processes.
+Through animation, each event, marked by its specific timestamp and duration, comes alive, allowing viewers to witness
+the chronological flow of activities and get insights into the pace and rhythm of the process.
+
+The animation serves as a tool for understanding temporal dynamics, enabling deeper analysis and comprehension of
+time-dependent phenomena.
+
+The <TypeLink type="ProcessMiningProvider" /> component offers convenient methods to start and stop the animation.
+
+<Playground
+  code={`
+function AnimatedProcessMining () {
+  const { startAnimation, stopAnimation } = useProcessMiningContext()
+  const [ timestamp, setTimestamp ] = useState(0)
+  const [ start, setStart ] = useState(true)
+  const maxTime = 30
+
+  return (
+    <ProcessMining eventLog={data} timestamp={timestamp}>
+      <div className="options">
+        <input type="range" min={0} max={30} onInput={e => { setTimestamp(parseFloat((e.target as HTMLInputElement).value)) }} value={timestamp}/ >
+        <button onClick={() => {
+            if (start) {
+              startAnimation(t => setTimestamp(t), timestamp, maxTime, 20000)
+            } else {
+              stopAnimation()
+            }
+            setStart(!start)
+          }}>{start ? 'Start' : 'Stop'}</button>
+      </div>
+    </ProcessMining>
+  )
+}
+
+function App() {
+  return (
+    <ProcessMiningProvider>
+      <AnimatedProcessMining></AnimatedProcessMining>
+    </ProcessMiningProvider>
+  )
+}
+`}
+  data={`[
+  { caseId: 0, activity: 'Start', timestamp: 8.383561495922297, duration: 0.0006804154279300233 },
+  { caseId: 0, activity: 'Prepare', timestamp: 8.928697652413142, duration: 0.10316578562597925 },
+  { caseId: 0, activity: 'Step A-2', timestamp: 9.576999594529966, duration: 0.041202953341980784 },
+  { caseId: 0, activity: 'Step B', timestamp: 10.163338704362792, duration: 0.2746326125522593 },
+  {
+    caseId: 0,
+    activity: 'End of Preparation',
+    timestamp: 10.983107473405896,
+    duration: 0.10035954970188066
+  },
+  {
+    caseId: 0,
+    activity: 'Main Processing',
+    timestamp: 11.628603179598622,
+    duration: 0.04434260865775148
+  },
+  { caseId: 0, activity: 'Testing', timestamp: 12.218081944747219, duration: 0.30488257571333444 },
+  { caseId: 0, activity: 'Store', timestamp: 13.0681006769514, duration: 0.7694921075873278 },
+  { caseId: 1, activity: 'Start', timestamp: 8.440190978196396, duration: 0.12386560405535628 },
+  { caseId: 1, activity: 'Evaluation', timestamp: 9.11024174884518, duration: 0.1032555823068597 },
+  { caseId: 1, activity: 'Advance', timestamp: 9.883548101800823, duration: 0.05358665280323382 },
+  {
+    caseId: 1,
+    activity: 'Refinement 2',
+    timestamp: 10.60718552525284,
+    duration: 1.3171043472736066
+  },
+  { caseId: 1, activity: 'Testing', timestamp: 12.59434064317523, duration: 1.7124119321246152 },
+  { caseId: 1, activity: 'Store', timestamp: 14.976803345948628, duration: 0.6897930786032263 },
+  { caseId: 2, activity: 'Start', timestamp: 1.0562848571952754, duration: 0.05980714505726121 },
+  {
+    caseId: 2,
+    activity: 'Evaluation',
+    timestamp: 1.6804018229106372,
+    duration: 0.18397367461115444
+  },
+  { caseId: 2, activity: 'Advance', timestamp: 2.4884924632371535, duration: 0.011167197470891812 },
+  {
+    caseId: 2,
+    activity: 'Refinement 2',
+    timestamp: 3.123776626423407,
+    duration: 0.3745180843030138
+  },
+  { caseId: 2, activity: 'Testing', timestamp: 4.122411676441782, duration: 0.7645492077945475 },
+  { caseId: 2, activity: 'Store', timestamp: 5.5110778499516915, duration: 0.8665512727839029 },
+  { caseId: 3, activity: 'Start', timestamp: 4.598251192050629, duration: 0.03401813424759133 },
+  { caseId: 3, activity: 'Prepare', timestamp: 5.29070315859802, duration: 0.011466731813906034 },
+  {
+    caseId: 3,
+    activity: 'End of Preparation',
+    timestamp: 5.994621856959317,
+    duration: 0.10990739418895988
+  },
+  {
+    caseId: 3,
+    activity: 'Main Processing',
+    timestamp: 6.796981217695668,
+    duration: 0.07195899734812275
+  },
+  { caseId: 3, activity: 'Testing', timestamp: 7.561392181591182, duration: 0.1622407725782038 },
+  { caseId: 3, activity: 'Store', timestamp: 8.416084920716777, duration: 0.8436544800943682 },
+  { caseId: 4, activity: 'Start', timestamp: 4.114272745288609, duration: 0.14030773093261423 },
+  {
+    caseId: 4,
+    activity: 'Evaluation',
+    timestamp: 4.687180971950848,
+    duration: 0.03834069983409249
+  },
+  { caseId: 4, activity: 'Advance', timestamp: 5.29842989844718, duration: 0.060746732531130755 },
+  {
+    caseId: 4,
+    activity: 'Refinement 2',
+    timestamp: 5.93208485764055,
+    duration: 2.6813036668024894
+  },
+  { caseId: 4, activity: 'Testing', timestamp: 9.186296751105278, duration: 3.1270538777495895 },
+  { caseId: 4, activity: 'Store', timestamp: 12.886258855517106, duration: 0.46427605306851505 },
+  { caseId: 5, activity: 'Start', timestamp: 0.6208788581156055, duration: 0.04068162148194454 },
+  { caseId: 5, activity: 'Prepare', timestamp: 1.2273051464340201, duration: 0.24478756426564038 },
+  { caseId: 5, activity: 'Step A-1', timestamp: 2.0785189990180752, duration: 0.3156079417061621 },
+  { caseId: 5, activity: 'Step B', timestamp: 3.0005532290426515, duration: 0.0902045032065493 },
+  {
+    caseId: 5,
+    activity: 'End of Preparation',
+    timestamp: 3.697184020567615,
+    duration: 0.0481654216171625
+  },
+  {
+    caseId: 5,
+    activity: 'Main Processing',
+    timestamp: 4.351775730503192,
+    duration: 0.10194780165854819
+  },
+  {
+    caseId: 5,
+    activity: 'Refinement 1',
+    timestamp: 5.060149820480155,
+    duration: 0.5230006027025853
+  },
+  { caseId: 5, activity: 'Testing', timestamp: 6.189576711501155, duration: 0.042340697814951644 },
+  { caseId: 5, activity: 'Store', timestamp: 6.838343697634521, duration: 0.9131843486709352 },
+  { caseId: 6, activity: 'Start', timestamp: 2.0545975856565346, duration: 0.07275320333270294 },
+  { caseId: 6, activity: 'Evaluation', timestamp: 2.7531450792510537, duration: 0.192007698548512 },
+  { caseId: 6, activity: 'Advance', timestamp: 3.643700271394085, duration: 0.07470183513467625 },
+  {
+    caseId: 6,
+    activity: 'Refinement 2',
+    timestamp: 4.416949600123281,
+    duration: 0.2524663597654888
+  },
+  { caseId: 6, activity: 'Testing', timestamp: 5.367963453483289, duration: 0.9935708539383974 },
+  { caseId: 6, activity: 'Store', timestamp: 7.060081801016205, duration: 0.7676878722903366 },
+  { caseId: 7, activity: 'Start', timestamp: 9.617931187430507, duration: 0.08206897445023123 },
+  { caseId: 7, activity: 'Prepare', timestamp: 10.31282751128826, duration: 0.07128132157984989 },
+  { caseId: 7, activity: 'Step A-1', timestamp: 11.079005156725863, duration: 0.36469739271997775 },
+  { caseId: 7, activity: 'Step B', timestamp: 12.138598873303595, duration: 0.34695333339231504 },
+  {
+    caseId: 7,
+    activity: 'End of Preparation',
+    timestamp: 13.180448530553663,
+    duration: 0.11984771384582346
+  },
+  {
+    caseId: 7,
+    activity: 'Main Processing',
+    timestamp: 13.99519256825724,
+    duration: 0.0052153192691965266
+  },
+  { caseId: 7, activity: 'Testing', timestamp: 14.69530421138419, duration: 0.9554173544010833 },
+  { caseId: 7, activity: 'Delivery', timestamp: 16.345617889643027, duration: 0.33132456552830036 },
+  { caseId: 8, activity: 'Start', timestamp: 9.424804182139347, duration: 0.15006812066101963 },
+  {
+    caseId: 8,
+    activity: 'Evaluation',
+    timestamp: 10.00244428504649,
+    duration: 0.07249841818383046
+  },
+  { caseId: 8, activity: 'Advance', timestamp: 10.652582806137463, duration: 0.02926718860383909 },
+  {
+    caseId: 8,
+    activity: 'Refinement 2',
+    timestamp: 11.259490097648445,
+    duration: 1.3021939046271207
+  },
+  { caseId: 8, activity: 'Testing', timestamp: 13.139324105182709, duration: 3.7423339622523555 },
+  { caseId: 8, activity: 'Store', timestamp: 17.45929817034221, duration: 0.7032673680716988 },
+  { caseId: 9, activity: 'Start', timestamp: 8.901622475922577, duration: 0.03677798407846514 },
+  {
+    caseId: 9,
+    activity: 'Evaluation',
+    timestamp: 9.401969245570337,
+    duration: 0.05563840079460743
+  },
+  { caseId: 9, activity: 'Advance', timestamp: 9.957954416012704, duration: 0.05156419456252484 },
+  {
+    caseId: 9,
+    activity: 'Refinement 2',
+    timestamp: 10.509865380222989,
+    duration: 0.2674639187404184
+  },
+  { caseId: 9, activity: 'Testing', timestamp: 11.277676068611166, duration: 3.943430029588823 },
+  { caseId: 9, activity: 'Delivery', timestamp: 15.721452867847749, duration: 0.12736651501513196 },
+  { caseId: 10, activity: 'Start', timestamp: 8.58100774852055, duration: 0.013991861135144203 },
+  {
+    caseId: 10,
+    activity: 'Evaluation',
+    timestamp: 9.261872005262562,
+    duration: 0.08033873583475622
+  },
+  { caseId: 10, activity: 'Advance', timestamp: 10.023074997839332, duration: 0.09069999891405993 },
+  {
+    caseId: 10,
+    activity: 'Refinement 2',
+    timestamp: 10.794639253495404,
+    duration: 1.7809062231070294
+  },
+  { caseId: 10, activity: 'Testing', timestamp: 13.256409733344446, duration: 3.902833045336819 },
+  { caseId: 10, activity: 'Store', timestamp: 17.84010703542328, duration: 0.8622050606804637 },
+  { caseId: 11, activity: 'Start', timestamp: 3.68353547220696, duration: 0.1029796654552091 },
+  {
+    caseId: 11,
+    activity: 'Evaluation',
+    timestamp: 4.303125820862993,
+    duration: 0.009568058599700453
+  },
+  { caseId: 11, activity: 'Advance', timestamp: 4.932284228118726, duration: 0.08647820753515985 },
+  {
+    caseId: 11,
+    activity: 'Refinement 2',
+    timestamp: 5.638352784309919,
+    duration: 2.792345804025146
+  },
+  { caseId: 11, activity: 'Testing', timestamp: 9.050288936991098, duration: 1.8387065772929674 },
+  { caseId: 11, activity: 'Store', timestamp: 11.508585862940098, duration: 0.25491488882234603 },
+  { caseId: 12, activity: 'Start', timestamp: 4.821881452254761, duration: 0.07626955960003104 },
+  {
+    caseId: 12,
+    activity: 'Evaluation',
+    timestamp: 5.518533505535828,
+    duration: 0.1101333689989251
+  },
+  { caseId: 12, activity: 'Advance', timestamp: 6.32531892781582, duration: 0.05877421941220262 },
+  {
+    caseId: 12,
+    activity: 'Refinement 2',
+    timestamp: 7.080745200509089,
+    duration: 2.7284952388434083
+  },
+  { caseId: 12, activity: 'Testing', timestamp: 10.505892492633564, duration: 3.1730696941099445 },
+  { caseId: 12, activity: 'Delivery', timestamp: 14.375614240024575, duration: 0.9873603529895951 },
+  { caseId: 13, activity: 'Start', timestamp: 5.2409795620703665, duration: 0.17444923035654583 },
+  {
+    caseId: 13,
+    activity: 'Evaluation',
+    timestamp: 5.756848575143394,
+    duration: 0.014918481573789643
+  },
+  { caseId: 13, activity: 'Advance', timestamp: 6.287636069790211, duration: 0.04320257787436 },
+  {
+    caseId: 13,
+    activity: 'Refinement 2',
+    timestamp: 6.846707660737598,
+    duration: 0.21486608233759763
+  },
+  { caseId: 13, activity: 'Testing', timestamp: 7.577442756148224, duration: 3.332410624802619 },
+  { caseId: 13, activity: 'Delivery', timestamp: 11.42572239402387, duration: 0.3196215863594136 },
+  { caseId: 14, activity: 'Start', timestamp: 7.52491658533822, duration: 0.03680540545401566 },
+  { caseId: 14, activity: 'Prepare', timestamp: 8.202423538170969, duration: 0.12285374569335851 },
+  { caseId: 14, activity: 'Step A-1', timestamp: 9.002784236697076, duration: 0.18776529731304234 },
+  { caseId: 14, activity: 'Step B', timestamp: 9.868056486842868, duration: 0.35663169642008496 },
+  {
+    caseId: 14,
+    activity: 'End of Preparation',
+    timestamp: 10.9021951360957,
+    duration: 0.046306511164839685
+  },
+  {
+    caseId: 14,
+    activity: 'Main Processing',
+    timestamp: 11.62600860009329,
+    duration: 0.03344194938966147
+  },
+  {
+    caseId: 14,
+    activity: 'Refinement 1',
+    timestamp: 12.3369575023157,
+    duration: 1.7951266723086485
+  },
+  { caseId: 14, activity: 'Testing', timestamp: 14.809591127457098, duration: 0.9762553216315399 },
+  { caseId: 14, activity: 'Store', timestamp: 16.463353401921385, duration: 0.27095733155450863 },
+  { caseId: 15, activity: 'Start', timestamp: 7.494683439960241, duration: 0.38168089272460953 },
+  { caseId: 15, activity: 'Prepare', timestamp: 8.056696331368226, duration: 0.13510543557705337 },
+  { caseId: 15, activity: 'Step A-1', timestamp: 8.753814658353264, duration: 0.21605243219520293 },
+  { caseId: 15, activity: 'Step B', timestamp: 9.531879981956452, duration: 0.030843026155917035 },
+  {
+    caseId: 15,
+    activity: 'End of Preparation',
+    timestamp: 10.124735899520354,
+    duration: 0.08482985015623852
+  },
+  {
+    caseId: 15,
+    activity: 'Main Processing',
+    timestamp: 10.771578641084579,
+    duration: 0.052578980243116344
+  },
+  { caseId: 15, activity: 'Testing', timestamp: 11.386170512735681, duration: 1.8068206530135762 },
+  {
+    caseId: 15,
+    activity: 'Delivery',
+    timestamp: 13.755004057157244,
+    duration: 0.20497252225593376
+  },
+  { caseId: 16, activity: 'Start', timestamp: 9.415485136497388, duration: 0.2167490309507655 },
+  {
+    caseId: 16,
+    activity: 'Evaluation',
+    timestamp: 9.98694877018579,
+    duration: 0.14049643376046878
+  },
+  { caseId: 16, activity: 'Advance', timestamp: 10.698908837634661, duration: 0.09545756531332977 },
+  {
+    caseId: 16,
+    activity: 'Refinement 2',
+    timestamp: 11.365830036636392,
+    duration: 1.0650029505347738
+  },
+  { caseId: 16, activity: 'Testing', timestamp: 13.002296620859568, duration: 1.4094088920467245 },
+  {
+    caseId: 16,
+    activity: 'Rejection',
+    timestamp: 14.983169146594694,
+    duration: 0.5031237383809064
+  },
+  { caseId: 17, activity: 'Start', timestamp: 4.748284717040631, duration: 0.015623536557752192 },
+  {
+    caseId: 17,
+    activity: 'Evaluation',
+    timestamp: 5.401312338858087,
+    duration: 0.21140944075092255
+  },
+  { caseId: 17, activity: 'Advance', timestamp: 6.265749401426465, duration: 0.03882804754678421 },
+  {
+    caseId: 17,
+    activity: 'Refinement 2',
+    timestamp: 6.957605070790705,
+    duration: 2.3498278745898467
+  },
+  { caseId: 17, activity: 'Testing', timestamp: 9.960460567198007, duration: 2.6130474439780063 },
+  { caseId: 17, activity: 'Store', timestamp: 13.22653563299347, duration: 0.8754597149055032 },
+  { caseId: 18, activity: 'Start', timestamp: 0.6661117520453397, duration: 0.16736634555351504 },
+  {
+    caseId: 18,
+    activity: 'Evaluation',
+    timestamp: 1.2548488010040595,
+    duration: 0.058918056513008396
+  },
+  {
+    caseId: 18,
+    activity: 'Advance',
+    timestamp: 1.9025039064757876,
+    duration: 0.007636565535171337
+  },
+  {
+    caseId: 18,
+    activity: 'Refinement 2',
+    timestamp: 2.4988775209696787,
+    duration: 0.5272986808605695
+  },
+  { caseId: 18, activity: 'Testing', timestamp: 3.614913250788968, duration: 0.7395260530693939 },
+  { caseId: 18, activity: 'Delivery', timestamp: 4.943176352817082, duration: 0.12331221927676195 },
+  { caseId: 19, activity: 'Start', timestamp: 8.601370358271957, duration: 0.17498688261977263 },
+  { caseId: 19, activity: 'Prepare', timestamp: 9.140590602602034, duration: 0.17812976038174524 },
+  { caseId: 19, activity: 'Step A-1', timestamp: 9.857940607313855, duration: 0.12285086461980166 },
+  { caseId: 19, activity: 'Step B', timestamp: 10.520011716263735, duration: 0.17415973923113942 },
+  {
+    caseId: 19,
+    activity: 'End of Preparation',
+    timestamp: 11.233391699824951,
+    duration: 0.04449311074139544
+  },
+  { caseId: 19, activity: 'Buffer', timestamp: 11.817105054896423, duration: 0.08724568142775363 },
+  {
+    caseId: 19,
+    activity: 'Main Processing',
+    timestamp: 12.443570980654254,
+    duration: 7.950860605786241
+  },
+  { caseId: 19, activity: 'Delivery', timestamp: 20.933651830770575, duration: 0.7717974468588489 },
+  { caseId: 20, activity: 'Start', timestamp: 0.4145350279693827, duration: 0.017271384545183004 },
+  { caseId: 20, activity: 'Prepare', timestamp: 1.0472882783732405, duration: 0.06353283858485087 },
+  { caseId: 20, activity: 'Step A-1', timestamp: 1.743574367361949, duration: 0.2873057978393386 },
+  { caseId: 20, activity: 'Step B', timestamp: 2.6636334156051453, duration: 0.03313753998284924 },
+  {
+    caseId: 20,
+    activity: 'End of Preparation',
+    timestamp: 3.329524205991852,
+    duration: 0.09538050472778896
+  },
+  { caseId: 20, activity: 'Buffer', timestamp: 4.057657961123499, duration: 0.09084828883550222 },
+  {
+    caseId: 20,
+    activity: 'Main Processing',
+    timestamp: 4.781259500362859,
+    duration: 1.5080525211645357
+  },
+  { caseId: 20, activity: 'Delivery', timestamp: 6.9220652719312525, duration: 1.1923697888159683 },
+  { caseId: 21, activity: 'Start', timestamp: 8.48181846194754, duration: 0.12806803177235215 },
+  {
+    caseId: 21,
+    activity: 'Evaluation',
+    timestamp: 9.112061482738348,
+    duration: 0.06656446437927922
+  },
+  { caseId: 21, activity: 'Advance', timestamp: 9.808868967908435, duration: 0.05011323500524117 },
+  {
+    caseId: 21,
+    activity: 'Refinement 2',
+    timestamp: 10.489225223704484,
+    duration: 1.9353224575718448
+  },
+  { caseId: 21, activity: 'Testing', timestamp: 13.054790702067136, duration: 3.0025671795729627 },
+  { caseId: 21, activity: 'Delivery', timestamp: 16.687600902430905, duration: 0.8283438299680175 },
+  { caseId: 22, activity: 'Start', timestamp: 5.316066811254694, duration: 0.03831440279244659 },
+  { caseId: 22, activity: 'Prepare', timestamp: 5.9636450125152, duration: 0.22304115056907117 },
+  { caseId: 22, activity: 'Step A-2', timestamp: 6.834264364344778, duration: 0.1701709523783747 },
+  { caseId: 22, activity: 'Step B', timestamp: 7.652013517983659, duration: 0.27277981546700475 },
+  {
+    caseId: 22,
+    activity: 'End of Preparation',
+    timestamp: 8.57237153471117,
+    duration: 0.06131684089545023
+  },
+  {
+    caseId: 22,
+    activity: 'Main Processing',
+    timestamp: 9.281266576867127,
+    duration: 0.06653062383723218
+  },
+  {
+    caseId: 22,
+    activity: 'Refinement 1',
+    timestamp: 9.995375401964866,
+    duration: 1.740522224185308
+  },
+  {
+    caseId: 22,
+    activity: 'Testing',
+    timestamp: 12.383475827410681,
+    duration: 0.022805266714006178
+  },
+  { caseId: 22, activity: 'Delivery', timestamp: 13.053859295385195, duration: 0.8896386653598161 },
+  { caseId: 23, activity: 'Start', timestamp: 4.469336150920431, duration: 0.3727352157053333 },
+  {
+    caseId: 23,
+    activity: 'Evaluation',
+    timestamp: 5.157645414038611,
+    duration: 0.04280003405905414
+  },
+  { caseId: 23, activity: 'Advance', timestamp: 5.888754711215845, duration: 0.07498193075478818 },
+  {
+    caseId: 23,
+    activity: 'Refinement 2',
+    timestamp: 6.652045905088813,
+    duration: 2.994034936855027
+  },
+  { caseId: 23, activity: 'Testing', timestamp: 10.334390105062019, duration: 2.3848786095661616 },
+  { caseId: 23, activity: 'Delivery', timestamp: 13.40757797774636, duration: 0.2674469313736816 },
+  { caseId: 24, activity: 'Start', timestamp: 5.445955577719596, duration: 0.03447533485630679 },
+  { caseId: 24, activity: 'Prepare', timestamp: 5.997876340478423, duration: 0.12657856612228738 },
+  { caseId: 24, activity: 'Step A-1', timestamp: 6.676375669359537, duration: 0.4072095643541554 },
+  { caseId: 24, activity: 'Step B', timestamp: 7.635505996472519, duration: 0.11734426153864197 },
+  {
+    caseId: 24,
+    activity: 'End of Preparation',
+    timestamp: 8.304771020769987,
+    duration: 0.031102403832606526
+  },
+  {
+    caseId: 24,
+    activity: 'Main Processing',
+    timestamp: 8.88779418736142,
+    duration: 0.09709457110567749
+  },
+  { caseId: 24, activity: 'Testing', timestamp: 9.536809521225925, duration: 0.35315090558145146 },
+  { caseId: 24, activity: 'Store', timestamp: 10.441881189566203, duration: 0.05168117328200772 },
+  { caseId: 25, activity: 'Start', timestamp: 3.6575308773897763, duration: 0.04437598094155318 },
+  {
+    caseId: 25,
+    activity: 'Evaluation',
+    timestamp: 4.288305206736765,
+    duration: 0.1909381248139566
+  },
+  {
+    caseId: 25,
+    activity: 'Early Discard',
+    timestamp: 5.11001766089771,
+    duration: 0.08867275356325849
+  },
+  { caseId: 26, activity: 'Start', timestamp: 3.951702889344959, duration: 0.08352032470795416 },
+  { caseId: 26, activity: 'Prepare', timestamp: 4.557587698560489, duration: 0.11059236780633899 },
+  { caseId: 26, activity: 'Step A-1', timestamp: 5.274064875582358, duration: 0.2902515771138593 },
+  { caseId: 26, activity: 'Step B', timestamp: 6.170201261911747, duration: 0.10322639949362204 },
+  {
+    caseId: 26,
+    activity: 'End of Preparation',
+    timestamp: 6.879312470620899,
+    duration: 0.08988212885409666
+  },
+  {
+    caseId: 26,
+    activity: 'Main Processing',
+    timestamp: 7.5750794086905255,
+    duration: 0.09897061721287262
+  },
+  { caseId: 26, activity: 'Delivery', timestamp: 8.279934835118928, duration: 0.5799425653549255 },
+  { caseId: 27, activity: 'Start', timestamp: 9.286210628606547, duration: 0.01903337969281233 },
+  {
+    caseId: 27,
+    activity: 'Evaluation',
+    timestamp: 9.855984159646221,
+    duration: 0.15196902488390668
+  },
+  { caseId: 27, activity: 'Advance', timestamp: 10.577726715569801, duration: 0.05184203764518088 },
+  {
+    caseId: 27,
+    activity: 'Refinement 2',
+    timestamp: 11.199342284254655,
+    duration: 0.39220157461709815
+  },
+  { caseId: 27, activity: 'Testing', timestamp: 12.161317389911426, duration: 2.929299577138184 },
+  { caseId: 27, activity: 'Delivery', timestamp: 15.660390498089283, duration: 0.5574455914481538 },
+  { caseId: 28, activity: 'Start', timestamp: 4.252238473978835, duration: 0.008595472689531081 },
+  { caseId: 28, activity: 'Prepare', timestamp: 4.84393299149835, duration: 0.05593978586069837 },
+  { caseId: 28, activity: 'Step A-1', timestamp: 5.491567294878563, duration: 0.3091576681895675 },
+  { caseId: 28, activity: 'Step B', timestamp: 6.3924194805876455, duration: 0.10743380873644524 },
+  {
+    caseId: 28,
+    activity: 'End of Preparation',
+    timestamp: 7.0915478068436055,
+    duration: 0.01584566636212802
+  },
+  { caseId: 28, activity: 'Buffer', timestamp: 7.699087990725249, duration: 0.093037772793827 },
+  {
+    caseId: 28,
+    activity: 'Main Processing',
+    timestamp: 8.383820281038592,
+    duration: 8.531114398095387
+  },
+  {
+    caseId: 28,
+    activity: 'Refinement 1',
+    timestamp: 17.506629196653492,
+    duration: 0.3414840103531218
+  },
+  { caseId: 28, activity: 'Testing', timestamp: 18.43980772452613, duration: 0.1379142541156062 },
+  { caseId: 28, activity: 'Delivery', timestamp: 19.16941649616125, duration: 0.9483056165265449 },
+  { caseId: 29, activity: 'Start', timestamp: 2.6253846977192463, duration: 0.08166862477366924 },
+  { caseId: 29, activity: 'Prepare', timestamp: 3.1726675485138056, duration: 0.11761359840203628 },
+  {
+    caseId: 29,
+    activity: 'Step A-2',
+    timestamp: 3.8375639977104012,
+    duration: 0.24847056516295024
+  },
+  { caseId: 29, activity: 'Step B', timestamp: 4.6333174136679105, duration: 0.20759202812026084 },
+  {
+    caseId: 29,
+    activity: 'End of Preparation',
+    timestamp: 5.388192292582731,
+    duration: 0.11042504149765006
+  },
+  {
+    caseId: 29,
+    activity: 'Main Processing',
+    timestamp: 6.04590018487494,
+    duration: 0.10095880942773144
+  },
+  {
+    caseId: 29,
+    activity: 'Refinement 1',
+    timestamp: 6.6941418450972305,
+    duration: 1.6195657704814486
+  },
+  { caseId: 29, activity: 'Testing', timestamp: 8.860990466373238, duration: 0.562437852808467 },
+  { caseId: 29, activity: 'Delivery', timestamp: 9.970711169976264, duration: 0.6808239828207969 },
+  { caseId: 30, activity: 'Start', timestamp: 9.630009790516642, duration: 0.3103582288733725 },
+  { caseId: 30, activity: 'Prepare', timestamp: 10.301058736007292, duration: 0.0636523679973947 },
+  {
+    caseId: 30,
+    activity: 'Step A-2',
+    timestamp: 11.035760049495337,
+    duration: 0.20870532573505002
+  },
+  { caseId: 30, activity: 'Step B', timestamp: 11.915514320721037, duration: 0.04986558845017554 },
+  {
+    caseId: 30,
+    activity: 'End of Preparation',
+    timestamp: 12.636428854661863,
+    duration: 0.014090460828182837
+  },
+  {
+    caseId: 30,
+    activity: 'Main Processing',
+    timestamp: 13.321568260980698,
+    duration: 0.0985490125644111
+  },
+  {
+    caseId: 30,
+    activity: 'Refinement 1',
+    timestamp: 14.09116621903576,
+    duration: 0.5829843459413451
+  },
+  { caseId: 30, activity: 'Testing', timestamp: 15.345199510467756, duration: 0.2640141476842106 },
+  { caseId: 30, activity: 'Delivery', timestamp: 16.28026260364262, duration: 0.29812617520837836 },
+  { caseId: 31, activity: 'Start', timestamp: 3.903360909086686, duration: 0.12379688669758168 },
+  { caseId: 31, activity: 'Prepare', timestamp: 4.486083361568701, duration: 0.07115242856205925 },
+  { caseId: 31, activity: 'Step A-1', timestamp: 5.139958242612776, duration: 0.38761661089666527 },
+  { caseId: 31, activity: 'Step B', timestamp: 6.110297305991457, duration: 0.2289464855736107 },
+  {
+    caseId: 31,
+    activity: 'End of Preparation',
+    timestamp: 6.921966244047084,
+    duration: 0.01634072616108345
+  },
+  {
+    caseId: 31,
+    activity: 'Main Processing',
+    timestamp: 7.521029422690182,
+    duration: 0.09364806178599572
+  },
+  { caseId: 31, activity: 'Testing', timestamp: 8.197399936958194, duration: 0.9086682804362596 },
+  { caseId: 31, activity: 'Store', timestamp: 9.688790669876468, duration: 0.6129670760638404 },
+  { caseId: 32, activity: 'Start', timestamp: 7.297974747126002, duration: 0.00017392072937596491 },
+  {
+    caseId: 32,
+    activity: 'Evaluation',
+    timestamp: 7.877925940117978,
+    duration: 0.02161504399304726
+  },
+  { caseId: 32, activity: 'Advance', timestamp: 8.479492177103003, duration: 0.05781700047924722 },
+  {
+    caseId: 32,
+    activity: 'Refinement 2',
+    timestamp: 9.117260370574227,
+    duration: 1.8707891609636926
+  },
+  { caseId: 32, activity: 'Testing', timestamp: 11.568000724529897, duration: 1.7586640858078644 },
+  { caseId: 32, activity: 'Delivery', timestamp: 13.906616003329738, duration: 0.7734259763280995 },
+  { caseId: 33, activity: 'Start', timestamp: 3.9494414402441214, duration: 0.11022891678876025 },
+  { caseId: 33, activity: 'Prepare', timestamp: 4.500864778209317, duration: 0.2424995525095621 },
+  { caseId: 33, activity: 'Step A-1', timestamp: 5.294787668684076, duration: 0.3774234812519271 },
+  { caseId: 33, activity: 'Step B', timestamp: 6.223634487901198, duration: 0.15152919171003906 },
+  {
+    caseId: 33,
+    activity: 'End of Preparation',
+    timestamp: 6.926587017576433,
+    duration: 0.1035906466362106
+  },
+  {
+    caseId: 33,
+    activity: 'Main Processing',
+    timestamp: 7.58160100217784,
+    duration: 0.047023372475475105
+  },
+  { caseId: 33, activity: 'Delivery', timestamp: 8.18004771261851, duration: 1.0310843257841187 },
+  { caseId: 34, activity: 'Start', timestamp: 2.2221018382930313, duration: 0.1202281491568704 },
+  {
+    caseId: 34,
+    activity: 'Evaluation',
+    timestamp: 2.7810443686648023,
+    duration: 0.1495310664636292
+  },
+  { caseId: 34, activity: 'Advance', timestamp: 3.4895179655002027, duration: 0.03765251361585059 },
+  {
+    caseId: 34,
+    activity: 'Refinement 2',
+    timestamp: 4.086113009487825,
+    duration: 2.1301000275431834
+  },
+  { caseId: 34, activity: 'Testing', timestamp: 6.77515556740278, duration: 0.3237717042132875 },
+  { caseId: 34, activity: 'Delivery', timestamp: 7.657869801987839, duration: 0.1995630961128605 },
+  { caseId: 35, activity: 'Start', timestamp: 6.71858351581244, duration: 0.04127197092913719 },
+  {
+    caseId: 35,
+    activity: 'Evaluation',
+    timestamp: 7.235346283699175,
+    duration: 0.09971481779783098
+  },
+  {
+    caseId: 35,
+    activity: 'Early Discard',
+    timestamp: 7.851823869383741,
+    duration: 0.08957945174373573
+  },
+  { caseId: 36, activity: 'Start', timestamp: 4.5330364021035745, duration: 0.06706183903998265 },
+  { caseId: 36, activity: 'Prepare', timestamp: 5.194963617481058, duration: 0.24876975968292359 },
+  { caseId: 36, activity: 'Step A-1', timestamp: 6.105660592541465, duration: 0.4105505080348784 },
+  { caseId: 36, activity: 'Step B', timestamp: 7.178138315953827, duration: 0.2017242224469128 },
+  {
+    caseId: 36,
+    activity: 'End of Preparation',
+    timestamp: 8.041789753778223,
+    duration: 0.06814615829337654
+  },
+  { caseId: 36, activity: 'Buffer', timestamp: 8.771863127449084, duration: 0.019211645119415796 },
+  {
+    caseId: 36,
+    activity: 'Main Processing',
+    timestamp: 9.453001987945983,
+    duration: 6.077415864943861
+  },
+  {
+    caseId: 36,
+    activity: 'Delivery',
+    timestamp: 16.192345068267326,
+    duration: 0.12469088289661112
+  },
+  { caseId: 37, activity: 'Start', timestamp: 4.64652252835222, duration: 0.34428707117165286 },
+  { caseId: 37, activity: 'Prepare', timestamp: 5.337700787766147, duration: 0.16817294337690336 },
+  { caseId: 37, activity: 'Step A-1', timestamp: 6.197051990556978, duration: 0.35424893979853833 },
+  { caseId: 37, activity: 'Step B', timestamp: 7.242479189769444, duration: 0.27798078749415006 },
+  {
+    caseId: 37,
+    activity: 'End of Preparation',
+    timestamp: 8.211638236677521,
+    duration: 0.056362259399954755
+  },
+  {
+    caseId: 37,
+    activity: 'Main Processing',
+    timestamp: 8.959178755491404,
+    duration: 0.008059805943618423
+  },
+  { caseId: 37, activity: 'Delivery', timestamp: 9.65841682084895, duration: 0.5992304461802873 },
+  { caseId: 38, activity: 'Start', timestamp: 8.65331827117313, duration: 0.08547412859453105 },
+  { caseId: 38, activity: 'Prepare', timestamp: 9.290223383975642, duration: 0.12091250671513948 },
+  {
+    caseId: 38,
+    activity: 'Step A-1',
+    timestamp: 10.048041003493292,
+    duration: 0.048290641649973536
+  },
+  { caseId: 38, activity: 'Step B', timestamp: 10.733236757945777, duration: 0.2875107775019329 },
+  {
+    caseId: 38,
+    activity: 'End of Preparation',
+    timestamp: 11.65765264825022,
+    duration: 0.09369072946521866
+  },
+  {
+    caseId: 38,
+    activity: 'Main Processing',
+    timestamp: 12.38824849051795,
+    duration: 0.08699056188709862
+  },
+  { caseId: 38, activity: 'Testing', timestamp: 13.11214416520756, duration: 0.9438106665972583 },
+  { caseId: 38, activity: 'Store', timestamp: 14.69285994460733, duration: 0.06655911578817775 },
+  { caseId: 39, activity: 'Start', timestamp: 9.129640521441, duration: 0.06548522487667857 },
+  {
+    caseId: 39,
+    activity: 'Evaluation',
+    timestamp: 9.671849947963324,
+    duration: 0.07918342827877203
+  },
+  { caseId: 39, activity: 'Advance', timestamp: 10.29324280276442, duration: 0.005575725367057925 },
+  {
+    caseId: 39,
+    activity: 'Prepare Shortcut',
+    timestamp: 10.841027954653802,
+    duration: 0.913656693241029
+  },
+  {
+    caseId: 39,
+    activity: 'Quick Preparation',
+    timestamp: 12.296894074417153,
+    duration: 0.008898183076261796
+  },
+  { caseId: 39, activity: 'Buffer', timestamp: 12.848001684015738, duration: 0.13459274651950162 },
+  {
+    caseId: 39,
+    activity: 'Main Processing',
+    timestamp: 13.524803857057563,
+    duration: 7.624082782815657
+  },
+  { caseId: 39, activity: 'Testing', timestamp: 21.69109606639554, duration: 0.5626611336307432 },
+  { caseId: 39, activity: 'Store', timestamp: 22.79596662654861, duration: 0.6056493483034326 },
+  { caseId: 40, activity: 'Start', timestamp: 1.5199298994135413, duration: 0.0007741621115735264 },
+  { caseId: 40, activity: 'Prepare', timestamp: 2.046054618848385, duration: 0.08180023896637365 },
+  { caseId: 40, activity: 'Step A-1', timestamp: 2.653979577249602, duration: 0.15986191704469582 },
+  { caseId: 40, activity: 'Step B', timestamp: 3.3399662137291415, duration: 0.0770778232663738 },
+  {
+    caseId: 40,
+    activity: 'End of Preparation',
+    timestamp: 3.943168756430359,
+    duration: 0.018608067464804513
+  },
+  { caseId: 40, activity: 'Buffer', timestamp: 4.487901543330007, duration: 0.060853856835438626 },
+  {
+    caseId: 40,
+    activity: 'Main Processing',
+    timestamp: 5.074880119600289,
+    duration: 8.933084880510023
+  },
+  { caseId: 40, activity: 'Testing', timestamp: 14.534089719545156, duration: 1.5433200670914342 },
+  {
+    caseId: 40,
+    activity: 'Delivery',
+    timestamp: 16.603534506071433,
+    duration: 0.21594596861534066
+  },
+  { caseId: 41, activity: 'Start', timestamp: 0.7400739434713555, duration: 0.022928073449837657 },
+  {
+    caseId: 41,
+    activity: 'Evaluation',
+    timestamp: 1.2674819012173129,
+    duration: 0.2627261392638365
+  },
+  { caseId: 41, activity: 'Advance', timestamp: 2.0576159982271065, duration: 0.05307912603288447 },
+  {
+    caseId: 41,
+    activity: 'Refinement 2',
+    timestamp: 2.6381030820059483,
+    duration: 2.746529882436246
+  },
+  { caseId: 41, activity: 'Testing', timestamp: 5.912040922188152, duration: 2.9905935652750566 },
+  { caseId: 41, activity: 'Store', timestamp: 9.430042445209166, duration: 0.5637717399292084 },
+  { caseId: 42, activity: 'Start', timestamp: 4.176269602347416, duration: 0.03801603532982928 },
+  { caseId: 42, activity: 'Prepare', timestamp: 4.805755636599059, duration: 0.1458558937950054 },
+  { caseId: 42, activity: 'Step A-2', timestamp: 5.581097564645708, duration: 0.0680872752393571 },
+  { caseId: 42, activity: 'Step B', timestamp: 6.278670874136708, duration: 0.08015117104966993 },
+  {
+    caseId: 42,
+    activity: 'End of Preparation',
+    timestamp: 6.988308079438021,
+    duration: 0.10680469623533799
+  },
+  {
+    caseId: 42,
+    activity: 'Main Processing',
+    timestamp: 7.724598809925002,
+    duration: 0.09129304758611145
+  },
+  { caseId: 42, activity: 'Delivery', timestamp: 8.445377891762757, duration: 1.5733740281221524 },
+  { caseId: 43, activity: 'Start', timestamp: 2.7136892207402696, duration: 0.0022339555620913753 },
+  { caseId: 43, activity: 'Prepare', timestamp: 3.405531293785401, duration: 0.036508760098306794 },
+  { caseId: 43, activity: 'Step A-2', timestamp: 4.133882126928839, duration: 0.3997401295751875 },
+  { caseId: 43, activity: 'Step B', timestamp: 5.225464329549157, duration: 0.015354184317980493 },
+  {
+    caseId: 43,
+    activity: 'End of Preparation',
+    timestamp: 5.932660586912269,
+    duration: 0.0011511698251090877
+  },
+  { caseId: 43, activity: 'Buffer', timestamp: 6.62565382978251, duration: 0.02896343313319386 },
+  {
+    caseId: 43,
+    activity: 'Main Processing',
+    timestamp: 7.3464593359608354,
+    duration: 0.4529708633942753
+  },
+  { caseId: 43, activity: 'Testing', timestamp: 8.491272272400243, duration: 1.817231796690082 },
+  { caseId: 43, activity: 'Delivery', timestamp: 11.000346142135458, duration: 0.3440219217943692 },
+  { caseId: 44, activity: 'Start', timestamp: 9.937602508222046, duration: 0.07594681398535996 },
+  {
+    caseId: 44,
+    activity: 'Evaluation',
+    timestamp: 10.482985277876285,
+    duration: 0.03600368317145724
+  },
+  {
+    caseId: 44,
+    activity: 'Advance',
+    timestamp: 11.064371730701982,
+    duration: 0.019173691910070057
+  },
+  {
+    caseId: 44,
+    activity: 'Refinement 2',
+    timestamp: 11.628928192266292,
+    duration: 0.9510275280364642
+  },
+  { caseId: 44, activity: 'Testing', timestamp: 13.125338489956995, duration: 1.909730123732051 },
+  { caseId: 44, activity: 'Delivery', timestamp: 15.580451383343286, duration: 0.8212539126309424 },
+  { caseId: 45, activity: 'Start', timestamp: 9.867302880283228, duration: 0.04790591268611062 },
+  { caseId: 45, activity: 'Prepare', timestamp: 10.535276412413202, duration: 0.14552598230848426 },
+  { caseId: 45, activity: 'Step A-2', timestamp: 11.34877592685166, duration: 0.3335862234125575 },
+  { caseId: 45, activity: 'Step B', timestamp: 12.350335682394192, duration: 0.24059691618781587 },
+  {
+    caseId: 45,
+    activity: 'End of Preparation',
+    timestamp: 13.258906130711981,
+    duration: 0.033139898586791436
+  },
+  {
+    caseId: 45,
+    activity: 'Main Processing',
+    timestamp: 13.960019561428746,
+    duration: 0.05942764923626516
+  },
+  {
+    caseId: 45,
+    activity: 'Delivery',
+    timestamp: 14.687420742794986,
+    duration: 0.40985185833666593
+  },
+  { caseId: 46, activity: 'Start', timestamp: 6.720222829936089, duration: 0.06024045141886652 },
+  {
+    caseId: 46,
+    activity: 'Evaluation',
+    timestamp: 7.406628432521516,
+    duration: 0.19438771475452088
+  },
+  {
+    caseId: 46,
+    activity: 'Early Discard',
+    timestamp: 8.287421749861464,
+    duration: 0.034292129840259776
+  },
+  { caseId: 47, activity: 'Start', timestamp: 5.630468015241044, duration: 0.009949991507821748 },
+  { caseId: 47, activity: 'Prepare', timestamp: 6.329199539182815, duration: 0.2335462362783721 },
+  { caseId: 47, activity: 'Step A-2', timestamp: 7.261477299402959, duration: 0.01944889556223574 },
+  { caseId: 47, activity: 'Step B', timestamp: 7.9796577189069655, duration: 0.026881207059801026 },
+  {
+    caseId: 47,
+    activity: 'End of Preparation',
+    timestamp: 8.70527044990854,
+    duration: 0.05769166052603652
+  },
+  {
+    caseId: 47,
+    activity: 'Main Processing',
+    timestamp: 9.461693634376347,
+    duration: 0.0024447003517782924
+  },
+  {
+    caseId: 47,
+    activity: 'Refinement 1',
+    timestamp: 10.162869858669897,
+    duration: 0.02204187799811619
+  },
+  { caseId: 47, activity: 'Testing', timestamp: 10.883643260609784, duration: 0.11045747705991649 },
+  { caseId: 47, activity: 'Delivery', timestamp: 11.692832261611471, duration: 0.4713459845638368 },
+  { caseId: 48, activity: 'Start', timestamp: 9.762393780182322, duration: 0.3390150243928985 },
+  { caseId: 48, activity: 'Prepare', timestamp: 10.373163588632055, duration: 0.0733474559574619 },
+  { caseId: 48, activity: 'Step A-1', timestamp: 11.05728085303925, duration: 0.26464929037235246 },
+  { caseId: 48, activity: 'Step B', timestamp: 11.932699951861336, duration: 0.26289995892496054 },
+  {
+    caseId: 48,
+    activity: 'End of Preparation',
+    timestamp: 12.806369719236029,
+    duration: 0.09431846188172646
+  },
+  { caseId: 48, activity: 'Buffer', timestamp: 13.51145798956749, duration: 0.011435450934567251 },
+  {
+    caseId: 48,
+    activity: 'Main Processing',
+    timestamp: 14.13366324895179,
+    duration: 9.155655440850037
+  },
+  { caseId: 48, activity: 'Testing', timestamp: 23.90008849825156, duration: 0.7273242799012101 },
+  { caseId: 48, activity: 'Delivery', timestamp: 25.238182586602502, duration: 0.600400722708403 },
+  { caseId: 49, activity: 'Start', timestamp: 0.031005847808556197, duration: 0.12396174515323444 },
+  { caseId: 49, activity: 'Prepare', timestamp: 0.6113522988075336, duration: 0.20439544538517362 },
+  {
+    caseId: 49,
+    activity: 'Step A-1',
+    timestamp: 1.3960941951916848,
+    duration: 0.06279176234640498
+  },
+  { caseId: 49, activity: 'Step B', timestamp: 2.039232408537067, duration: 0.042321681166951945 },
+  {
+    caseId: 49,
+    activity: 'End of Preparation',
+    timestamp: 2.6619005407029963,
+    duration: 0.06420040048035172
+  },
+  {
+    caseId: 49,
+    activity: 'Main Processing',
+    timestamp: 3.306447392182325,
+    duration: 0.02441359250256182
+  },
+  { caseId: 49, activity: 'Delivery', timestamp: 3.911207435683864, duration: 1.5983896892808604 },
+  { caseId: 50, activity: 'Start', timestamp: 8.222158715494102, duration: 0.12549863766878327 },
+  {
+    caseId: 50,
+    activity: 'Evaluation',
+    timestamp: 8.75865433563795,
+    duration: 0.19858054981652395
+  },
+  { caseId: 50, activity: 'Advance', timestamp: 9.493730505598318, duration: 0.07565343687694266 },
+  {
+    caseId: 50,
+    activity: 'Refinement 2',
+    timestamp: 10.105879562619108,
+    duration: 0.3066957550522089
+  },
+  { caseId: 50, activity: 'Testing', timestamp: 10.949070937815165, duration: 1.3161474621658504 },
+  { caseId: 50, activity: 'Store', timestamp: 12.801714020124862, duration: 0.7659843748504531 },
+  { caseId: 51, activity: 'Start', timestamp: 6.655333961884626, duration: 0.05888337071897326 },
+  {
+    caseId: 51,
+    activity: 'Evaluation',
+    timestamp: 7.235863851954559,
+    duration: 0.15620222688682647
+  },
+  { caseId: 51, activity: 'Advance', timestamp: 7.9725959689113175, duration: 0.03946198581198035 },
+  {
+    caseId: 51,
+    activity: 'Refinement 2',
+    timestamp: 8.592587844793231,
+    duration: 0.27074884882641337
+  },
+  { caseId: 51, activity: 'Testing', timestamp: 9.443866583689577, duration: 3.344848723565355 },
+  { caseId: 51, activity: 'Store', timestamp: 13.369245197324865, duration: 0.36205851764224173 },
+  { caseId: 52, activity: 'Start', timestamp: 0.8192969668305228, duration: 0.21148026556582852 },
+  {
+    caseId: 52,
+    activity: 'Evaluation',
+    timestamp: 1.355821630092926,
+    duration: 0.22459148727837702
+  },
+  { caseId: 52, activity: 'Advance', timestamp: 2.116937780633706, duration: 0.040878990117785306 },
+  {
+    caseId: 52,
+    activity: 'Refinement 2',
+    timestamp: 2.6943414340138947,
+    duration: 1.4840732277853999
+  },
+  { caseId: 52, activity: 'Testing', timestamp: 4.714939325061698, duration: 1.6455921456557538 },
+  { caseId: 52, activity: 'Delivery', timestamp: 6.897056133979855, duration: 0.6587672735238417 },
+  { caseId: 53, activity: 'Start', timestamp: 4.247046851608081, duration: 0.08891430727672191 },
+  {
+    caseId: 53,
+    activity: 'Evaluation',
+    timestamp: 4.872659160339376,
+    duration: 0.2618184128830224
+  },
+  { caseId: 53, activity: 'Advance', timestamp: 5.760089881953694, duration: 0.004960289447404911 },
+  {
+    caseId: 53,
+    activity: 'Refinement 2',
+    timestamp: 6.390662480132394,
+    duration: 2.3097779900788593
+  },
+  { caseId: 53, activity: 'Testing', timestamp: 9.326052778942548, duration: 2.672883213506254 },
+  { caseId: 53, activity: 'Store', timestamp: 12.624548301180099, duration: 0.16589436506968624 },
+  { caseId: 54, activity: 'Start', timestamp: 8.187017502332507, duration: 0.11123235445444013 },
+  {
+    caseId: 54,
+    activity: 'Evaluation',
+    timestamp: 8.716641869338737,
+    duration: 0.14562142780584214
+  },
+  { caseId: 54, activity: 'Advance', timestamp: 9.39188766415081, duration: 0.011369779677915946 },
+  {
+    caseId: 54,
+    activity: 'Refinement 2',
+    timestamp: 9.932881810834957,
+    duration: 0.74036749829876
+  },
+  { caseId: 54, activity: 'Testing', timestamp: 11.202873676139946, duration: 1.374594051992859 },
+  { caseId: 54, activity: 'Store', timestamp: 13.107092095139036, duration: 0.2892015143477151 },
+  { caseId: 55, activity: 'Start', timestamp: 8.210404598882409, duration: 0.008514440461911632 },
+  {
+    caseId: 55,
+    activity: 'Evaluation',
+    timestamp: 8.713817104833137,
+    duration: 0.027270051120251233
+  },
+  { caseId: 55, activity: 'Advance', timestamp: 9.244499661904118, duration: 0.01913532392727262 },
+  {
+    caseId: 55,
+    activity: 'Refinement 2',
+    timestamp: 9.767047491782119,
+    duration: 0.2268238124222557
+  },
+  { caseId: 55, activity: 'Testing', timestamp: 10.497283810155103, duration: 3.594252354801519 },
+  { caseId: 55, activity: 'Rejection', timestamp: 14.59494867090735, duration: 0.5608926336366886 },
+  { caseId: 56, activity: 'Start', timestamp: 5.889830796904281, duration: 0.13171398079513705 },
+  { caseId: 56, activity: 'Prepare', timestamp: 6.491602583832314, duration: 0.07573462176924994 },
+  { caseId: 56, activity: 'Step A-1', timestamp: 7.169108992529598, duration: 0.04277451791790495 },
+  { caseId: 56, activity: 'Step B', timestamp: 7.8136552973755355, duration: 0.04493476291273968 },
+  {
+    caseId: 56,
+    activity: 'End of Preparation',
+    timestamp: 8.460361847216308,
+    duration: 0.09290909124815497
+  },
+  { caseId: 56, activity: 'Buffer', timestamp: 9.155042725392496, duration: 0.017219505424127802 },
+  {
+    caseId: 56,
+    activity: 'Main Processing',
+    timestamp: 9.774034017744658,
+    duration: 5.047692899298442
+  },
+  { caseId: 56, activity: 'Delivery', timestamp: 15.423498703971132, duration: 0.5991759434038575 },
+  { caseId: 57, activity: 'Start', timestamp: 6.947644947525175, duration: 0.023929986983329526 },
+  {
+    caseId: 57,
+    activity: 'Evaluation',
+    timestamp: 7.578519940853335,
+    duration: 0.09503142148476844
+  },
+  { caseId: 57, activity: 'Advance', timestamp: 8.304426355666262, duration: 0.033330090141678106 },
+  {
+    caseId: 57,
+    activity: 'Refinement 2',
+    timestamp: 8.9686314391361,
+    duration: 0.20542324768377074
+  },
+  { caseId: 57, activity: 'Testing', timestamp: 9.80492968014803, duration: 3.0307729861824946 },
+  {
+    caseId: 57,
+    activity: 'Delivery',
+    timestamp: 13.466577659658684,
+    duration: 0.022866993292925075
+  },
+  { caseId: 58, activity: 'Start', timestamp: 1.0282494858192082, duration: 0.12724806590308932 },
+  {
+    caseId: 58,
+    activity: 'Evaluation',
+    timestamp: 1.714848520325989,
+    duration: 0.1923701533980521
+  },
+  {
+    caseId: 58,
+    activity: 'Advance',
+    timestamp: 2.5938177082308216,
+    duration: 0.026330715365281802
+  },
+  {
+    caseId: 58,
+    activity: 'Refinement 2',
+    timestamp: 3.306747458102884,
+    duration: 0.6394939677357847
+  },
+  { caseId: 58, activity: 'Testing', timestamp: 4.63284046034545, duration: 2.757572515403753 },
+  { caseId: 58, activity: 'Store', timestamp: 8.077012010255983, duration: 0.542517224481254 },
+  { caseId: 59, activity: 'Start', timestamp: 0.8129036735305761, duration: 0.302178214849521 },
+  {
+    caseId: 59,
+    activity: 'Evaluation',
+    timestamp: 1.448144589073744,
+    duration: 0.17241842224930468
+  },
+  { caseId: 59, activity: 'Advance', timestamp: 2.255803926866217, duration: 0.03973171220840365 },
+  {
+    caseId: 59,
+    activity: 'Refinement 2',
+    timestamp: 2.930776554617789,
+    duration: 1.776361726561651
+  },
+  { caseId: 59, activity: 'Testing', timestamp: 5.342379196722607, duration: 1.4929307903744293 },
+  { caseId: 59, activity: 'Delivery', timestamp: 7.470550902640205, duration: 0.5762840898265762 },
+  { caseId: 60, activity: 'Start', timestamp: 7.64099298857424, duration: 0.04184380670729131 },
+  { caseId: 60, activity: 'Prepare', timestamp: 8.27805914436572, duration: 0.10519189937182753 },
+  { caseId: 60, activity: 'Step A-2', timestamp: 9.020317199529028, duration: 0.39881963514044655 },
+  { caseId: 60, activity: 'Step B', timestamp: 10.056202990460955, duration: 0.2982430632965858 },
+  {
+    caseId: 60,
+    activity: 'End of Preparation',
+    timestamp: 10.99151220954902,
+    duration: 0.09698208442466748
+  },
+  {
+    caseId: 60,
+    activity: 'Main Processing',
+    timestamp: 11.725560449765167,
+    duration: 0.06716837502903689
+  },
+  { caseId: 60, activity: 'Testing', timestamp: 12.429794980585685, duration: 0.48989152775022715 },
+  { caseId: 60, activity: 'Delivery', timestamp: 13.556752664127393, duration: 0.689010193773572 },
+  { caseId: 61, activity: 'Start', timestamp: 3.0633961767454854, duration: 0.043951220250859124 },
+  { caseId: 61, activity: 'Prepare', timestamp: 3.706330831505735, duration: 0.20127505059334797 },
+  { caseId: 61, activity: 'Step A-1', timestamp: 4.550540536859333, duration: 0.2241766789171076 },
+  { caseId: 61, activity: 'Step B', timestamp: 5.41765187053669, duration: 0.351816472771599 },
+  {
+    caseId: 61,
+    activity: 'End of Preparation',
+    timestamp: 6.412402998068538,
+    duration: 0.06709623517492636
+  },
+  {
+    caseId: 61,
+    activity: 'Main Processing',
+    timestamp: 7.122433888003714,
+    duration: 0.024771773455861158
+  },
+  { caseId: 61, activity: 'Delivery', timestamp: 7.790140316219825, duration: 0.9673577743727257 },
+  { caseId: 62, activity: 'Start', timestamp: 8.795817492845133, duration: 0.2827223424302515 },
+  {
+    caseId: 62,
+    activity: 'Evaluation',
+    timestamp: 9.468566746338025,
+    duration: 0.15789435385797587
+  },
+  { caseId: 62, activity: 'Advance', timestamp: 10.299210353688894, duration: 0.05118935545712638 },
+  {
+    caseId: 62,
+    activity: 'Prepare Shortcut',
+    timestamp: 11.023148962638913,
+    duration: 0.12220342455370914
+  },
+  {
+    caseId: 62,
+    activity: 'Quick Preparation',
+    timestamp: 11.818101640685516,
+    duration: 0.00783541362074003
+  },
+  { caseId: 62, activity: 'Buffer', timestamp: 12.498686307799149, duration: 0.2781866717717954 },
+  {
+    caseId: 62,
+    activity: 'Main Processing',
+    timestamp: 13.449622233063836,
+    duration: 5.447699397804926
+  },
+  {
+    caseId: 62,
+    activity: 'Refinement 1',
+    timestamp: 19.570070884361655,
+    duration: 0.5488569150355382
+  },
+  { caseId: 62, activity: 'Testing', timestamp: 20.791677052890087, duration: 0.05162547038807119 },
+  { caseId: 62, activity: 'Store', timestamp: 21.51605177677105, duration: 0.9592535394826498 },
+  { caseId: 63, activity: 'Start', timestamp: 4.632101040358398, duration: 0.008098693450613613 },
+  { caseId: 63, activity: 'Prepare', timestamp: 5.194091331870254, duration: 0.013332324886273622 },
+  { caseId: 63, activity: 'Step A-1', timestamp: 5.769413948268385, duration: 0.07011370090586382 },
+  { caseId: 63, activity: 'Step B', timestamp: 6.401517940686105, duration: 0.15195431430425568 },
+  {
+    caseId: 63,
+    activity: 'End of Preparation',
+    timestamp: 7.1154625465022185,
+    duration: 0.011619057772574303
+  },
+  {
+    caseId: 63,
+    activity: 'Main Processing',
+    timestamp: 7.689071895786649,
+    duration: 0.07754781211519303
+  },
+  { caseId: 63, activity: 'Delivery', timestamp: 8.328609999413699, duration: 0.945048838573999 },
+  { caseId: 64, activity: 'Start', timestamp: 4.314764149112342, duration: 0.029794820088608873 },
+  { caseId: 64, activity: 'Prepare', timestamp: 4.978868877093775, duration: 0.2200012925170381 },
+  { caseId: 64, activity: 'Step A-1', timestamp: 5.862974897592245, duration: 0.2440489664524445 },
+  { caseId: 64, activity: 'Step B', timestamp: 6.771128592026122, duration: 0.14521199238693822 },
+  {
+    caseId: 64,
+    activity: 'End of Preparation',
+    timestamp: 7.580445312394493,
+    duration: 0.006781367991174565
+  },
+  {
+    caseId: 64,
+    activity: 'Main Processing',
+    timestamp: 8.251331408367099,
+    duration: 0.04871625259665275
+  },
+  {
+    caseId: 64,
+    activity: 'Refinement 1',
+    timestamp: 8.964152388945184,
+    duration: 0.022258625813224242
+  },
+  { caseId: 64, activity: 'Testing', timestamp: 9.65051574273984, duration: 0.20783907728332274 },
+  { caseId: 64, activity: 'Delivery', timestamp: 10.522459548004594, duration: 0.9660785720577825 },
+  { caseId: 65, activity: 'Start', timestamp: 5.529886900209173, duration: 0.21849597992138586 },
+  {
+    caseId: 65,
+    activity: 'Evaluation',
+    timestamp: 6.160055839644986,
+    duration: 0.1295893227742107
+  },
+  { caseId: 65, activity: 'Advance', timestamp: 6.919814101855009, duration: 0.06272839305720221 },
+  {
+    caseId: 65,
+    activity: 'Refinement 2',
+    timestamp: 7.612711434348023,
+    duration: 2.0374806299307533
+  },
+  { caseId: 65, activity: 'Testing', timestamp: 10.280361003714589, duration: 3.0902297415890603 },
+  { caseId: 65, activity: 'Delivery', timestamp: 14.000759684739462, duration: 0.462701229415708 },
+  { caseId: 66, activity: 'Start', timestamp: 5.353456562177257, duration: 0.2717000088448098 },
+  { caseId: 66, activity: 'Prepare', timestamp: 6.011254337342218, duration: 0.13422084337082607 },
+  { caseId: 66, activity: 'Step A-1', timestamp: 6.803272955878005, duration: 0.21910238474134652 },
+  { caseId: 66, activity: 'Step B', timestamp: 7.680173115784313, duration: 0.2236361312289353 },
+  {
+    caseId: 66,
+    activity: 'End of Preparation',
+    timestamp: 8.561607022178208,
+    duration: 0.06296682324108943
+  },
+  {
+    caseId: 66,
+    activity: 'Main Processing',
+    timestamp: 9.282371620584259,
+    duration: 0.08646108416514187
+  },
+  {
+    caseId: 66,
+    activity: 'Delivery',
+    timestamp: 10.026630479914362,
+    duration: 0.10268488041372947
+  },
+  { caseId: 67, activity: 'Start', timestamp: 0.9591111694205634, duration: 0.18479678742967234 },
+  {
+    caseId: 67,
+    activity: 'Evaluation',
+    timestamp: 1.517634455231254,
+    duration: 0.05378903728110233
+  },
+  { caseId: 67, activity: 'Advance', timestamp: 2.129946778323047, duration: 0.004242776304672267 },
+  {
+    caseId: 67,
+    activity: 'Refinement 2',
+    timestamp: 2.6927128404384097,
+    duration: 1.3688303874389063
+  },
+  { caseId: 67, activity: 'Testing', timestamp: 4.620066513688006, duration: 0.4373301464682502 },
+  { caseId: 67, activity: 'Delivery', timestamp: 5.615919945966947, duration: 0.7716373723779957 },
+  { caseId: 68, activity: 'Start', timestamp: 0.193485326240459, duration: 0.03540384847872646 },
+  {
+    caseId: 68,
+    activity: 'Prepare',
+    timestamp: 0.7643030797514141,
+    duration: 0.056816675212506884
+  },
+  { caseId: 68, activity: 'Step A-2', timestamp: 1.391937508474876, duration: 0.17652585111670985 },
+  { caseId: 68, activity: 'Step B', timestamp: 2.139281113102541, duration: 0.253580898772569 },
+  {
+    caseId: 68,
+    activity: 'End of Preparation',
+    timestamp: 2.9636797653860647,
+    duration: 0.06306934513995392
+  },
+  {
+    caseId: 68,
+    activity: 'Main Processing',
+    timestamp: 3.597566864036974,
+    duration: 0.005831240869918878
+  },
+  { caseId: 68, activity: 'Delivery', timestamp: 4.174215858417848, duration: 1.9796169487546136 },
+  { caseId: 69, activity: 'Start', timestamp: 0.38833057077259925, duration: 0.23812654146441378 },
+  { caseId: 69, activity: 'Prepare', timestamp: 0.953352369281095, duration: 0.040193507000168785 },
+  { caseId: 69, activity: 'Step A-1', timestamp: 1.5585676747897597, duration: 0.4138684901989105 },
+  { caseId: 69, activity: 'Step B', timestamp: 2.5374579634971655, duration: 0.06400457677930817 },
+  {
+    caseId: 69,
+    activity: 'End of Preparation',
+    timestamp: 3.1664843387849695,
+    duration: 0.08267253746176308
+  },
+  {
+    caseId: 69,
+    activity: 'Main Processing',
+    timestamp: 3.8141786747552286,
+    duration: 0.05258528784172731
+  },
+  { caseId: 69, activity: 'Testing', timestamp: 4.431785761105451, duration: 1.5379669154937226 },
+  { caseId: 69, activity: 'Delivery', timestamp: 6.534774475107669, duration: 0.6261836007288766 },
+  { caseId: 70, activity: 'Start', timestamp: 7.940525146280322, duration: 0.07616769975215143 },
+  { caseId: 70, activity: 'Prepare', timestamp: 8.47672118224493, duration: 0.0660166037511439 },
+  { caseId: 70, activity: 'Step A-2', timestamp: 9.078933821960682, duration: 0.1373347232975845 },
+  { caseId: 70, activity: 'Step B', timestamp: 9.752464581222874, duration: 0.22735944656271395 },
+  {
+    caseId: 70,
+    activity: 'End of Preparation',
+    timestamp: 10.516020063750195,
+    duration: 0.023885531526601948
+  },
+  { caseId: 70, activity: 'Buffer', timestamp: 11.076101631241405, duration: 0.10308182676777111 },
+  {
+    caseId: 70,
+    activity: 'Main Processing',
+    timestamp: 11.715379493973785,
+    duration: 7.230883257899563
+  },
+  {
+    caseId: 70,
+    activity: 'Refinement 1',
+    timestamp: 19.482458787837956,
+    duration: 0.7112979070635626
+  },
+  { caseId: 70, activity: 'Testing', timestamp: 20.729952730866128, duration: 0.14123577710574353 },
+  { caseId: 70, activity: 'Store', timestamp: 21.40738454393648, duration: 0.8519920739049323 },
+  { caseId: 71, activity: 'Start', timestamp: 4.2078239583105255, duration: 0.1099921378388134 },
+  { caseId: 71, activity: 'Prepare', timestamp: 4.754886175408714, duration: 0.007194069580289742 },
+  { caseId: 71, activity: 'Step A-1', timestamp: 5.309142462087191, duration: 0.21245125365878717 },
+  { caseId: 71, activity: 'Step B', timestamp: 6.068655932844168, duration: 0.0832294217040912 },
+  {
+    caseId: 71,
+    activity: 'End of Preparation',
+    timestamp: 6.698947571646446,
+    duration: 0.03724373322740396
+  },
+  { caseId: 71, activity: 'Buffer', timestamp: 7.283253521972039, duration: 0.05224366380643913 },
+  {
+    caseId: 71,
+    activity: 'Main Processing',
+    timestamp: 7.882559402876666,
+    duration: 5.999100190990538
+  },
+  { caseId: 71, activity: 'Delivery', timestamp: 14.428721810965394, duration: 1.9674228653934431 },
+  { caseId: 72, activity: 'Start', timestamp: 5.979586482797918, duration: 0.0030639821021209383 },
+  { caseId: 72, activity: 'Evaluation', timestamp: 6.609535931694812, duration: 0.262242298159451 },
+  { caseId: 72, activity: 'Advance', timestamp: 7.501727678751157, duration: 0.00936735738358913 },
+  {
+    caseId: 72,
+    activity: 'Refinement 2',
+    timestamp: 8.14104448503164,
+    duration: 2.590864684395462
+  },
+  { caseId: 72, activity: 'Testing', timestamp: 11.361858618323996, duration: 3.929895269034348 },
+  { caseId: 72, activity: 'Store', timestamp: 15.921703336255238, duration: 0.7880011912689708 },
+  { caseId: 73, activity: 'Start', timestamp: 9.88727490186504, duration: 0.054411840935740356 },
+  {
+    caseId: 73,
+    activity: 'Evaluation',
+    timestamp: 10.575034788215168,
+    duration: 0.07677183912515957
+  },
+  { caseId: 73, activity: 'Advance', timestamp: 11.339566513690457, duration: 0.03738658305783725 },
+  {
+    caseId: 73,
+    activity: 'Prepare Shortcut',
+    timestamp: 12.064712983098424,
+    duration: 1.228540066589127
+  },
+  {
+    caseId: 73,
+    activity: 'Quick Preparation',
+    timestamp: 13.981012936037681,
+    duration: 0.11489356613076102
+  },
+  { caseId: 73, activity: 'Buffer', timestamp: 14.783666388518572, duration: 0.2487219882283719 },
+  {
+    caseId: 73,
+    activity: 'Main Processing',
+    timestamp: 15.720148263097073,
+    duration: 9.688466793503483
+  },
+  {
+    caseId: 73,
+    activity: 'Delivery',
+    timestamp: 26.096374942950685,
+    duration: 0.34259855112761617
+  },
+  { caseId: 74, activity: 'Start', timestamp: 2.373669667161409, duration: 0.0645010875599274 },
+  { caseId: 74, activity: 'Prepare', timestamp: 2.9117178738912717, duration: 0.23865903739877267 },
+  {
+    caseId: 74,
+    activity: 'Step A-1',
+    timestamp: 3.6884251180199072,
+    duration: 0.41020562157987045
+  },
+  { caseId: 74, activity: 'Step B', timestamp: 4.63667894632964, duration: 0.058051891925372745 },
+  {
+    caseId: 74,
+    activity: 'End of Preparation',
+    timestamp: 5.232779044984877,
+    duration: 0.09530858164909868
+  },
+  { caseId: 74, activity: 'Buffer', timestamp: 5.866135833363838, duration: 0.028054699662537243 },
+  {
+    caseId: 74,
+    activity: 'Main Processing',
+    timestamp: 6.432238739756238,
+    duration: 0.509612655901448
+  },
+  { caseId: 74, activity: 'Testing', timestamp: 7.479899602387549, duration: 0.40497868972268636 },
+  { caseId: 74, activity: 'Delivery', timestamp: 8.422926498840098, duration: 0.7233449717371552 },
+  { caseId: 75, activity: 'Start', timestamp: 1.9336479135805207, duration: 0.2502844686189987 },
+  {
+    caseId: 75,
+    activity: 'Evaluation',
+    timestamp: 2.51366163434661,
+    duration: 0.15734688758309648
+  },
+  { caseId: 75, activity: 'Advance', timestamp: 3.2510222426957953, duration: 0.06189511849991078 },
+  {
+    caseId: 75,
+    activity: 'Refinement 2',
+    timestamp: 3.892931081961795,
+    duration: 0.4171303768561132
+  },
+  { caseId: 75, activity: 'Testing', timestamp: 4.890075179583997, duration: 1.3202051913939714 },
+  { caseId: 75, activity: 'Delivery', timestamp: 6.790294091744058, duration: 0.8922398121332151 },
+  { caseId: 76, activity: 'Start', timestamp: 8.334685395380868, duration: 0.025192893625034872 },
+  { caseId: 76, activity: 'Prepare', timestamp: 8.97016774414043, duration: 0.08805786827648067 },
+  { caseId: 76, activity: 'Step A-2', timestamp: 9.693707961176472, duration: 0.26731114330006284 },
+  { caseId: 76, activity: 'Step B', timestamp: 10.596501453236096, duration: 0.011059658990761464 },
+  {
+    caseId: 76,
+    activity: 'End of Preparation',
+    timestamp: 11.243043460986419,
+    duration: 0.10696990780535061
+  },
+  {
+    caseId: 76,
+    activity: 'Main Processing',
+    timestamp: 11.98549571755133,
+    duration: 0.02008256322371514
+  },
+  {
+    caseId: 76,
+    activity: 'Refinement 1',
+    timestamp: 12.641060629534607,
+    duration: 0.291547321330476
+  },
+  { caseId: 76, activity: 'Testing', timestamp: 13.568090299624645, duration: 0.3602821274106578 },
+  { caseId: 76, activity: 'Delivery', timestamp: 14.563854775794864, duration: 0.7337983022569072 },
+  { caseId: 77, activity: 'Start', timestamp: 8.394486711674631, duration: 0.009509877958744053 },
+  { caseId: 77, activity: 'Prepare', timestamp: 8.94705949086756, duration: 0.1637563613037479 },
+  { caseId: 77, activity: 'Step A-1', timestamp: 9.663388631364237, duration: 0.08015203110764561 },
+  { caseId: 77, activity: 'Step B', timestamp: 10.296113441664811, duration: 0.015929029969581465 },
+  {
+    caseId: 77,
+    activity: 'End of Preparation',
+    timestamp: 10.864615250827322,
+    duration: 0.020733001093671648
+  },
+  { caseId: 77, activity: 'Buffer', timestamp: 11.437921031113923, duration: 0.0345901231300186 },
+  {
+    caseId: 77,
+    activity: 'Main Processing',
+    timestamp: 12.025083933436871,
+    duration: 1.1403808397085569
+  },
+  {
+    caseId: 77,
+    activity: 'Refinement 1',
+    timestamp: 13.718037552338357,
+    duration: 1.313790728353117
+  },
+  { caseId: 77, activity: 'Testing', timestamp: 15.584401059884403, duration: 0.339838581829057 },
+  { caseId: 77, activity: 'Store', timestamp: 16.476812420906388, duration: 0.029655023948604642 },
+  { caseId: 78, activity: 'Start', timestamp: 9.443753213091918, duration: 0.21542707607519643 },
+  { caseId: 78, activity: 'Prepare', timestamp: 9.971903730169693, duration: 0.1667149793601279 },
+  {
+    caseId: 78,
+    activity: 'Step A-1',
+    timestamp: 10.666769226607595,
+    duration: 0.36156684038956644
+  },
+  { caseId: 78, activity: 'Step B', timestamp: 11.556486584074936, duration: 0.28233231627884353 },
+  {
+    caseId: 78,
+    activity: 'End of Preparation',
+    timestamp: 12.366969417431553,
+    duration: 0.08964757995567926
+  },
+  { caseId: 78, activity: 'Buffer', timestamp: 12.984767514465007, duration: 0.09874879523946273 },
+  {
+    caseId: 78,
+    activity: 'Main Processing',
+    timestamp: 13.611666826782244,
+    duration: 5.617886028460455
+  },
+  {
+    caseId: 78,
+    activity: 'Refinement 1',
+    timestamp: 19.75770337232047,
+    duration: 0.5132738472766922
+  },
+  { caseId: 78, activity: 'Testing', timestamp: 20.799127736674937, duration: 0.8185495580604913 },
+  { caseId: 78, activity: 'Delivery', timestamp: 22.145827811813202, duration: 0.3406561990902808 },
+  { caseId: 79, activity: 'Start', timestamp: 1.6652611599087308, duration: 0.12309834442445439 },
+  {
+    caseId: 79,
+    activity: 'Evaluation',
+    timestamp: 2.318837602196898,
+    duration: 0.2312215184233723
+  },
+  { caseId: 79, activity: 'Advance', timestamp: 3.2036355629084374, duration: 0.08719987710597396 },
+  {
+    caseId: 79,
+    activity: 'Refinement 2',
+    timestamp: 3.944411882302579,
+    duration: 1.1582009974209788
+  },
+  { caseId: 79, activity: 'Testing', timestamp: 5.756189322011725, duration: 3.1973132738713756 },
+  { caseId: 79, activity: 'Delivery', timestamp: 9.60707903817127, duration: 0.6958313795703208 },
+  { caseId: 80, activity: 'Start', timestamp: 4.4540398614230465, duration: 0.028223514417005897 },
+  { caseId: 80, activity: 'Prepare', timestamp: 5.111993386845967, duration: 0.13267427300456033 },
+  { caseId: 80, activity: 'Step A-1', timestamp: 5.902621185273447, duration: 0.4149804840854961 },
+  { caseId: 80, activity: 'Step B', timestamp: 6.9755551947818635, duration: 0.09310406463362184 },
+  {
+    caseId: 80,
+    activity: 'End of Preparation',
+    timestamp: 7.726612784838405,
+    duration: 0.04170341596584573
+  },
+  { caseId: 80, activity: 'Buffer', timestamp: 8.42626972622717, duration: 0.07575155770344243 },
+  {
+    caseId: 80,
+    activity: 'Main Processing',
+    timestamp: 9.159974809353534,
+    duration: 5.098435589658925
+  },
+  {
+    caseId: 80,
+    activity: 'Refinement 1',
+    timestamp: 14.916363924435379,
+    duration: 0.9661159490196085
+  },
+  { caseId: 80, activity: 'Testing', timestamp: 16.540433398877905, duration: 0.38089343616888427 },
+  { caseId: 80, activity: 'Store', timestamp: 17.57928036046971, duration: 0.7223470636223701 },
+  { caseId: 81, activity: 'Start', timestamp: 8.647558782851853, duration: 0.08255264268607072 },
+  { caseId: 81, activity: 'Prepare', timestamp: 9.277005218709675, duration: 0.15949733468443292 },
+  { caseId: 81, activity: 'Step A-1', timestamp: 10.06594898925193, duration: 0.38951909668235224 },
+  { caseId: 81, activity: 'Step B', timestamp: 11.084914521792106, duration: 0.07120672656511058 },
+  {
+    caseId: 81,
+    activity: 'End of Preparation',
+    timestamp: 11.785567684215039,
+    duration: 0.09200519663205427
+  },
+  {
+    caseId: 81,
+    activity: 'Main Processing',
+    timestamp: 12.507019316704916,
+    duration: 0.036207484320294504
+  },
+  { caseId: 81, activity: 'Delivery', timestamp: 13.172673236883034, duration: 1.127449769192327 },
+  { caseId: 82, activity: 'Start', timestamp: 5.167658070067249, duration: 0.28178856406999414 },
+  { caseId: 82, activity: 'Prepare', timestamp: 5.789563701289371, duration: 0.23190342463036012 },
+  { caseId: 82, activity: 'Step A-1', timestamp: 6.643372757141853, duration: 0.3376369694354113 },
+  { caseId: 82, activity: 'Step B', timestamp: 7.602915357799385, duration: 0.18461901590777632 },
+  {
+    caseId: 82,
+    activity: 'End of Preparation',
+    timestamp: 8.409440004929282,
+    duration: 0.0902289256851764
+  },
+  {
+    caseId: 82,
+    activity: 'Main Processing',
+    timestamp: 9.12157456183658,
+    duration: 0.06008591573532158
+  },
+  { caseId: 82, activity: 'Testing', timestamp: 9.803566108794023, duration: 1.4827553147029549 },
+  { caseId: 82, activity: 'Store', timestamp: 11.908227054719099, duration: 0.6004698254351974 },
+  { caseId: 83, activity: 'Start', timestamp: 4.0999587037930985, duration: 0.4259009448940158 },
+  { caseId: 83, activity: 'Prepare', timestamp: 4.7570621696444455, duration: 0.18752386826399267 },
+  { caseId: 83, activity: 'Step A-2', timestamp: 5.601689503759785, duration: 0.22467916768109192 },
+  { caseId: 83, activity: 'Step B', timestamp: 6.483472137292224, duration: 0.29170450106826806 },
+  {
+    caseId: 83,
+    activity: 'End of Preparation',
+    timestamp: 7.432280104211839,
+    duration: 0.10539997222896842
+  },
+  {
+    caseId: 83,
+    activity: 'Main Processing',
+    timestamp: 8.194783542292154,
+    duration: 0.05562705976874924
+  },
+  { caseId: 83, activity: 'Testing', timestamp: 8.907514067912249, duration: 1.1111546308981506 },
+  {
+    caseId: 83,
+    activity: 'Rejection',
+    timestamp: 10.675772164661748,
+    duration: 0.5030180252494787
+  },
+  { caseId: 84, activity: 'Start', timestamp: 5.250783995326911, duration: 0.03501554361267366 },
+  {
+    caseId: 84,
+    activity: 'Evaluation',
+    timestamp: 5.873544929062617,
+    duration: 0.0023135041983463663
+  },
+  { caseId: 84, activity: 'Advance', timestamp: 6.498619366996669, duration: 0.08883965890494365 },
+  {
+    caseId: 84,
+    activity: 'Refinement 2',
+    timestamp: 7.210219959637318,
+    duration: 0.886709176666457
+  },
+  { caseId: 84, activity: 'Testing', timestamp: 8.71969007003948, duration: 3.0353967224323393 },
+  {
+    caseId: 84,
+    activity: 'Delivery',
+    timestamp: 12.377847726207527,
+    duration: 0.018508318614896657
+  },
+  { caseId: 85, activity: 'Start', timestamp: 0.8341335250792126, duration: 0.24118155407457284 },
+  { caseId: 85, activity: 'Prepare', timestamp: 1.4842586752859757, duration: 0.1808787154042989 },
+  {
+    caseId: 85,
+    activity: 'Step A-1',
+    timestamp: 2.3152625408970375,
+    duration: 0.25384907358290276
+  },
+  { caseId: 85, activity: 'Step B', timestamp: 3.2192367646867033, duration: 0.3037278113937158 },
+  {
+    caseId: 85,
+    activity: 'End of Preparation',
+    timestamp: 4.173089726287182,
+    duration: 0.05832752660599945
+  },
+  {
+    caseId: 85,
+    activity: 'Main Processing',
+    timestamp: 4.881542403099944,
+    duration: 0.016989370070920957
+  },
+  {
+    caseId: 85,
+    activity: 'Refinement 1',
+    timestamp: 5.548656923377628,
+    duration: 0.948640210669367
+  },
+  { caseId: 85, activity: 'Testing', timestamp: 7.147422284253759, duration: 0.3636406811303676 },
+  { caseId: 85, activity: 'Delivery', timestamp: 8.161188115590889, duration: 0.574981832736889 },
+  { caseId: 86, activity: 'Start', timestamp: 9.365727912217679, duration: 0.029503864355145622 },
+  { caseId: 86, activity: 'Prepare', timestamp: 9.927850230270789, duration: 0.1879370617067062 },
+  {
+    caseId: 86,
+    activity: 'Step A-1',
+    timestamp: 10.677909610030603,
+    duration: 0.04030358802043526
+  },
+  { caseId: 86, activity: 'Step B', timestamp: 11.280335516104147, duration: 0.3622341291685543 },
+  {
+    caseId: 86,
+    activity: 'End of Preparation',
+    timestamp: 12.20469196332581,
+    duration: 0.04919684458564176
+  },
+  {
+    caseId: 86,
+    activity: 'Main Processing',
+    timestamp: 12.816011125964561,
+    duration: 0.001432508893542499
+  },
+  {
+    caseId: 86,
+    activity: 'Refinement 1',
+    timestamp: 13.379565952911213,
+    duration: 1.826138479359046
+  },
+  { caseId: 86, activity: 'Testing', timestamp: 15.767826750323367, duration: 0.9318477787904187 },
+  { caseId: 86, activity: 'Store', timestamp: 17.261796847166895, duration: 0.8406814385102805 },
+  { caseId: 87, activity: 'Start', timestamp: 1.446163840866641, duration: 0.10764301506260608 },
+  {
+    caseId: 87,
+    activity: 'Evaluation',
+    timestamp: 2.0090724351523326,
+    duration: 0.14463347234577717
+  },
+  {
+    caseId: 87,
+    activity: 'Advance',
+    timestamp: 2.7166145017838015,
+    duration: 0.003908479413798195
+  },
+  {
+    caseId: 87,
+    activity: 'Refinement 2',
+    timestamp: 3.2834315754832915,
+    duration: 2.581373669335475
+  },
+  { caseId: 87, activity: 'Testing', timestamp: 6.427713839104459, duration: 3.16553359168024 },
+  { caseId: 87, activity: 'Delivery', timestamp: 10.15615602507039, duration: 0.8252378340558348 },
+  { caseId: 88, activity: 'Start', timestamp: 1.7673385803968111, duration: 0.0019288167392181297 },
+  { caseId: 88, activity: 'Prepare', timestamp: 2.386374951395501, duration: 0.2111250823024754 },
+  {
+    caseId: 88,
+    activity: 'Step A-2',
+    timestamp: 3.2165364046966665,
+    duration: 0.05458235262029554
+  },
+  { caseId: 88, activity: 'Step B', timestamp: 3.890155128315652, duration: 0.05853833633485936 },
+  {
+    caseId: 88,
+    activity: 'End of Preparation',
+    timestamp: 4.567729835649201,
+    duration: 0.003639313569363335
+  },
+  { caseId: 88, activity: 'Buffer', timestamp: 5.190405520217254, duration: 0.032585694907026314 },
+  {
+    caseId: 88,
+    activity: 'Main Processing',
+    timestamp: 5.8420275861229705,
+    duration: 9.966845945750455
+  },
+  { caseId: 88, activity: 'Delivery', timestamp: 16.427909902872116, duration: 0.7151785056047215 },
+  { caseId: 89, activity: 'Start', timestamp: 0.10187584169649933, duration: 0.0936991228344604 },
+  { caseId: 89, activity: 'Prepare', timestamp: 0.6456400937159481, duration: 0.13491830568084945 },
+  {
+    caseId: 89,
+    activity: 'Step A-1',
+    timestamp: 1.3243226514162463,
+    duration: 0.11775845159316241
+  },
+  { caseId: 89, activity: 'Step B', timestamp: 1.9858453550288575, duration: 0.15114769181829146 },
+  {
+    caseId: 89,
+    activity: 'End of Preparation',
+    timestamp: 2.6807572988665975,
+    duration: 0.10861471519321012
+  },
+  { caseId: 89, activity: 'Buffer', timestamp: 3.3331362660792565, duration: 0.0845990820253301 },
+  {
+    caseId: 89,
+    activity: 'Main Processing',
+    timestamp: 3.9614996001240352,
+    duration: 7.589546654582784
+  },
+  {
+    caseId: 89,
+    activity: 'Refinement 1',
+    timestamp: 12.094810506726267,
+    duration: 0.842184211066614
+  },
+  { caseId: 89, activity: 'Testing', timestamp: 13.48075896981233, duration: 0.8769220931142696 },
+  { caseId: 89, activity: 'Store', timestamp: 14.901445314946049, duration: 0.18418199240934063 },
+  { caseId: 90, activity: 'Start', timestamp: 8.987491684102203, duration: 0.035811683923669416 },
+  { caseId: 90, activity: 'Prepare', timestamp: 9.60870208661455, duration: 0.12869374269890183 },
+  {
+    caseId: 90,
+    activity: 'Step A-1',
+    timestamp: 10.358606231825798,
+    duration: 0.07882970558259944
+  },
+  { caseId: 90, activity: 'Step B', timestamp: 11.058646339920744, duration: 0.014521162362183012 },
+  {
+    caseId: 90,
+    activity: 'End of Preparation',
+    timestamp: 11.694377904795273,
+    duration: 0.022523246794137586
+  },
+  {
+    caseId: 90,
+    activity: 'Main Processing',
+    timestamp: 12.338111554101758,
+    duration: 0.07599731038974972
+  },
+  {
+    caseId: 90,
+    activity: 'Refinement 1',
+    timestamp: 13.035319267003855,
+    duration: 1.1827783895897865
+  },
+  { caseId: 90, activity: 'Testing', timestamp: 14.839308059105988, duration: 0.5029141690470034 },
+  {
+    caseId: 90,
+    activity: 'Delivery',
+    timestamp: 15.963432630665338,
+    duration: 0.10987367028531758
+  },
+  { caseId: 91, activity: 'Start', timestamp: 2.230375173119188, duration: 0.14821515837712512 },
+  {
+    caseId: 91,
+    activity: 'Evaluation',
+    timestamp: 2.823184043320049,
+    duration: 0.03514851688526141
+  },
+  { caseId: 91, activity: 'Advance', timestamp: 3.451141430406171, duration: 0.08271983374597339 },
+  {
+    caseId: 91,
+    activity: 'Refinement 2',
+    timestamp: 4.126670134353005,
+    duration: 0.3665680714545647
+  },
+  { caseId: 91, activity: 'Testing', timestamp: 5.08604707600843, duration: 3.4499236433218847 },
+  { caseId: 91, activity: 'Delivery', timestamp: 9.128779589531176, duration: 0.9323583353602949 },
+  { caseId: 92, activity: 'Start', timestamp: 4.047219162947753, duration: 0.04275427325616992 },
+  {
+    caseId: 92,
+    activity: 'Evaluation',
+    timestamp: 4.564301054905848,
+    duration: 0.035873829953005795
+  },
+  { caseId: 92, activity: 'Advance', timestamp: 5.117256776816949, duration: 0.06394185762603409 },
+  {
+    caseId: 92,
+    activity: 'Refinement 2',
+    timestamp: 5.698280526401078,
+    duration: 1.474450478883861
+  },
+  { caseId: 92, activity: 'Testing', timestamp: 7.6898128972430335, duration: 0.281017095637754 },
+  { caseId: 92, activity: 'Delivery', timestamp: 8.487911884838882, duration: 0.39536815930461056 },
+  { caseId: 93, activity: 'Start', timestamp: 9.594580298115503, duration: 0.2959662453767202 },
+  {
+    caseId: 93,
+    activity: 'Prepare',
+    timestamp: 10.177880227240006,
+    duration: 0.006913740946974365
+  },
+  { caseId: 93, activity: 'Step A-1', timestamp: 10.768093897311484, duration: 0.3843374874673723 },
+  { caseId: 93, activity: 'Step B', timestamp: 11.735731313903358, duration: 0.33930638773595695 },
+  {
+    caseId: 93,
+    activity: 'End of Preparation',
+    timestamp: 12.658337630763818,
+    duration: 0.10827464020087284
+  },
+  {
+    caseId: 93,
+    activity: 'Main Processing',
+    timestamp: 13.349912200089193,
+    duration: 0.006001075568113528
+  },
+  {
+    caseId: 93,
+    activity: 'Refinement 1',
+    timestamp: 13.939213204781812,
+    duration: 0.036097571890304714
+  },
+  { caseId: 93, activity: 'Testing', timestamp: 14.558610705796617, duration: 0.9116589438533702 },
+  { caseId: 93, activity: 'Delivery', timestamp: 16.053569578774493, duration: 0.7159785930527622 },
+  { caseId: 94, activity: 'Start', timestamp: 4.93836130678466, duration: 0.11023411205586693 },
+  {
+    caseId: 94,
+    activity: 'Evaluation',
+    timestamp: 5.532202942240962,
+    duration: 0.05703441003245106
+  },
+  { caseId: 94, activity: 'Advance', timestamp: 6.183078987729716, duration: 0.02053168039261228 },
+  {
+    caseId: 94,
+    activity: 'Refinement 2',
+    timestamp: 6.7974523035786305,
+    duration: 1.3759109779024947
+  },
+  { caseId: 94, activity: 'Testing', timestamp: 8.767204916937427, duration: 0.382092480849785 },
+  { caseId: 94, activity: 'Delivery', timestamp: 9.743139033243514, duration: 0.9710773707679725 },
+  { caseId: 95, activity: 'Start', timestamp: 1.8460568755042694, duration: 0.02519032208885496 },
+  {
+    caseId: 95,
+    activity: 'Evaluation',
+    timestamp: 2.3827144570891208,
+    duration: 0.04815765755202315
+  },
+  { caseId: 95, activity: 'Advance', timestamp: 2.967529696225995, duration: 0.0955898398953887 },
+  {
+    caseId: 95,
+    activity: 'Refinement 2',
+    timestamp: 3.599777117706235,
+    duration: 2.692945138696976
+  },
+  { caseId: 95, activity: 'Testing', timestamp: 6.829379837988062, duration: 1.480540999608471 },
+  { caseId: 95, activity: 'Delivery', timestamp: 8.846578419181384, duration: 0.5313738715974685 },
+  { caseId: 96, activity: 'Start', timestamp: 0.5885754032475599, duration: 0.06201733013966867 },
+  { caseId: 96, activity: 'Prepare', timestamp: 1.1024960990193298, duration: 0.18050940964621678 },
+  { caseId: 96, activity: 'Step A-1', timestamp: 1.7969262044373164, duration: 0.3681683795549491 },
+  { caseId: 96, activity: 'Step B', timestamp: 2.6790152797640356, duration: 0.23367774053716403 },
+  {
+    caseId: 96,
+    activity: 'End of Preparation',
+    timestamp: 3.4266137160729695,
+    duration: 0.07766241455606508
+  },
+  { caseId: 96, activity: 'Buffer', timestamp: 4.018196826400804, duration: 0.0199719773295377 },
+  {
+    caseId: 96,
+    activity: 'Main Processing',
+    timestamp: 4.552089499502111,
+    duration: 7.14355316640521
+  },
+  {
+    caseId: 96,
+    activity: 'Refinement 1',
+    timestamp: 12.209563361679091,
+    duration: 1.3028626822295628
+  },
+  { caseId: 96, activity: 'Testing', timestamp: 14.026346739680424, duration: 0.0672938857553409 },
+  { caseId: 96, activity: 'Store', timestamp: 14.607561321207534, duration: 0.8658324092960217 },
+  { caseId: 97, activity: 'Start', timestamp: 6.1925884079219085, duration: 0.027907239248179325 },
+  { caseId: 97, activity: 'Prepare', timestamp: 6.735806978921125, duration: 0.08924911346307433 },
+  { caseId: 97, activity: 'Step A-1', timestamp: 7.368274663383415, duration: 0.17757148377053708 },
+  { caseId: 97, activity: 'Step B', timestamp: 8.08906471815317, duration: 0.19164404267080384 },
+  {
+    caseId: 97,
+    activity: 'End of Preparation',
+    timestamp: 8.82392733182319,
+    duration: 0.05277624186613817
+  },
+  {
+    caseId: 97,
+    activity: 'Main Processing',
+    timestamp: 9.419922144688545,
+    duration: 0.04942069983345494
+  },
+  { caseId: 97, activity: 'Delivery', timestamp: 10.012561415521217, duration: 1.6664805631423127 },
+  { caseId: 98, activity: 'Start', timestamp: 9.03713437814915, duration: 0.076960368443008 },
+  { caseId: 98, activity: 'Prepare', timestamp: 9.709153879115217, duration: 0.11914921406462498 },
+  { caseId: 98, activity: 'Step A-1', timestamp: 10.50032259414591, duration: 0.41099014723871835 },
+  {
+    caseId: 98,
+    activity: 'Step B',
+    timestamp: 11.583332242350696,
+    duration: 0.0014439118377595041
+  },
+  {
+    caseId: 98,
+    activity: 'End of Preparation',
+    timestamp: 12.256795655154525,
+    duration: 0.08804594602062439
+  },
+  {
+    caseId: 98,
+    activity: 'Main Processing',
+    timestamp: 13.016861102141217,
+    duration: 0.07694437328100123
+  },
+  { caseId: 98, activity: 'Testing', timestamp: 13.765824976388286, duration: 1.6232635857399482 },
+  { caseId: 98, activity: 'Store', timestamp: 16.061108063094302, duration: 0.07995185436305308 },
+  { caseId: 99, activity: 'Start', timestamp: 5.557260437585134, duration: 0.3498927853472353 },
+  { caseId: 99, activity: 'Prepare', timestamp: 6.2437310673622, duration: 0.11052919023010331 },
+  { caseId: 99, activity: 'Step A-1', timestamp: 7.040730887369369, duration: 0.09453953944304692 },
+  { caseId: 99, activity: 'Step B', timestamp: 7.821741056589483, duration: 0.09281810429404884 },
+  {
+    caseId: 99,
+    activity: 'End of Preparation',
+    timestamp: 8.601029790660599,
+    duration: 0.05627490930422333
+  },
+  { caseId: 99, activity: 'Buffer', timestamp: 9.343775329741888, duration: 0.05870825986248067 },
+  {
+    caseId: 99,
+    activity: 'Main Processing',
+    timestamp: 10.088954219381435,
+    duration: 2.92049562072473
+  },
+  { caseId: 99, activity: 'Testing', timestamp: 13.695920469883232, duration: 1.0102998425187462 },
+  { caseId: 99, activity: 'Store', timestamp: 15.392690942179044, duration: 0.3554449875379859 },
+  { caseId: 100, activity: 'Start', timestamp: 7.440240627065289, duration: 0.17615795584758187 },
+  {
+    caseId: 100,
+    activity: 'Evaluation',
+    timestamp: 8.0915714243622,
+    duration: 0.15838435957225483
+  },
+  { caseId: 100, activity: 'Advance', timestamp: 8.90128658123137, duration: 0.05841861797728252 },
+  {
+    caseId: 100,
+    activity: 'Refinement 2',
+    timestamp: 9.611035996505565,
+    duration: 1.3490375961268564
+  },
+  { caseId: 100, activity: 'Testing', timestamp: 11.611404389929335, duration: 3.0036947895129273 },
+  { caseId: 100, activity: 'Store', timestamp: 15.266429976739175, duration: 0.32562142957865925 },
+]`}
+  css={`
+.options {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 1em;
+    background-color: #393939;
+    padding: 10px;
+    border-radius: 10px;
+}
+`}
+/>

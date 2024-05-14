@@ -1,0 +1,38 @@
+.yfiles-react-render-process-step {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    background-color: #494949;
+    color: #d0d0d0;
+    border-radius: 7px;
+    position: relative;
+}
+
+.yfiles-react-render-process-step-gauge {
+    margin: 4px;
+    width: 44px;
+    height: 44px;
+    box-sizing: border-box;
+}
+
+.yfiles-react-render-process-step-text {
+    padding: 17px  17px 17px 7px;
+    font-family: Arial, sans-serif;
+    max-height: 100%;
+    overflow: hidden;
+    flex: 1 0;
+    box-sizing: border-box;
+    line-height: 19px;
+}
+
+.yfiles-react-node-highlight {
+    transition: box-shadow 0.5s ease-in-out;
+}
+
+.yfiles-react-node-highlight--selected {
+    box-shadow: 0 0 0 5px #ffbb33;
+}
+
+.yfiles-react-node-highlight--hovered {
+    box-shadow: 0 0 0 5px #249ae7;
+}

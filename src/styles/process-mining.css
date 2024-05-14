@@ -1,0 +1,36 @@
+@import '@yworks/react-yfiles-core/dist/index.css';
+
+/* this rule is needed to detect if the stylesheet is loaded */
+#react-yfiles-process-mining-stylesheet-detection {
+    --yfiles-react-stylesheet-detection: react-yfiles-process-mining-stylesheet-detection;
+    display: none;
+}
+
+.yfiles-react-popup__content {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-family: "Roboto", sans-serif;
+    border: 2px solid steelblue;
+    color: #242424;
+}
+
+.yfiles-react-tooltip {
+    color: #242424;
+    background-color: white;
+    font-family: Roboto, sans-serif;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 2px solid steelblue;
+    line-height: 1.5em;
+}
+
+.yfiles-react-popup__items-props {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.yfiles-react-popup__close-button {
+    align-self: flex-start;
+}

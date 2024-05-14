@@ -1,0 +1,5 @@
+.dashed-transition {
+    color: #56926e;
+    stroke-dasharray: 3px;
+    stroke-dashoffset: 6px;
+}

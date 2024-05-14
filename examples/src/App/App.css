@@ -1,0 +1,24 @@
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+header {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  font-weight: 700;
+  align-items: center;
+
+  .description {
+    font-family: sans-serif;
+    font-weight: normal;
+    margin: 0 10px;
+  }
+}
