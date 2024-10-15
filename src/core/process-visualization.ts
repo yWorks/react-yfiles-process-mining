@@ -43,34 +43,55 @@ export function prepareProcessVisualization<TEvent extends ActivityEvent>(
   // determine the heat over time for each transition
   graph.edges.forEach(transition => {
     const transitionData = getTransitionData(transition)
-    const sourceEvents = eventsByActivities[transitionData.sourceLabel]
-    const targetEvents = eventsByActivities[transitionData.targetLabel]
+    let allEvents
+    if (transition.isSelfloop) {
+      allEvents = eventsByActivities[transitionData.sourceLabel]
+      allEvents.sort((event1, event2) => event1.timestamp - event2.timestamp)
+      allEvents = allEvents.map((event, index) => ({
+        source: index % 2 === 0,
+        event
+      }))
+    } else {
+      const sourceEvents = eventsByActivities[transitionData.sourceLabel].map(event => ({
+        source: true,
+        event
+      }))
+      const targetEvents = eventsByActivities[transitionData.targetLabel].map(event => ({
+        source: false,
+        event
+      }))
+      allEvents = sourceEvents!.concat(targetEvents)
+    }
 
-    const allEvents = sourceEvents!.concat(targetEvents)
     allEvents
       .groupBy(
-        event => event.caseId,
+        event => event.event.caseId,
         (caseId, events) => events?.toArray() ?? []
       )
       .filter(events => events.length > 1)
-      .map(events => events.sort((event1, event2) => event1.timestamp - event2.timestamp))
+      .map(events =>
+        events.sort((event1, event2) => event1.event.timestamp - event2.event.timestamp)
+      )
       .forEach(events => {
-        // skip the last event if there is an odd number of events
-        const count = events.length % 2 === 0 ? events.length - 1 : events.length - 2
-        for (let i = 0; i < count; i += 2) {
-          // add the transition's heat value for its duration
-          transitionData.heat!.addValues(events[i].timestamp, events[i + 1].timestamp, 1)
+        for (let i = 0; i < events.length - 1; i++) {
+          if (events[i].source && !events[i + 1].source) {
+            const event = events[i].event
+            const nextEvent = events[i + 1].event
 
-          // add an item to the transition representing the event
-          const { hue, size } = transitionEventStyling(events[0], events[1])
-          transitionEventVisualSupport.addItem(
-            transition,
-            false,
-            events[0].timestamp,
-            events[1].timestamp,
-            size,
-            hue / 360
-          )
+            // add the transition's heat value for its duration
+            transitionData.heat!.addValues(event.timestamp, nextEvent.timestamp, 1)
+
+            // add an item to the transition representing the event
+            const { hue, size } = transitionEventStyling(event, nextEvent)
+            transitionEventVisualSupport.addItem(
+              transition,
+              false,
+              event.timestamp,
+              nextEvent.timestamp,
+              size,
+              hue / 360
+            )
+          }
         }
       })
 
