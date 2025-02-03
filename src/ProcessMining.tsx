@@ -25,7 +25,7 @@ import {
   useReactNodeRendering,
   withGraphComponent
 } from '@yworks/react-yfiles-core'
-import { GraphViewerInputMode, ICanvasObject, IEdge, INode } from 'yfiles'
+import { ClickEventArgs, GraphViewerInputMode, ICanvasObject, IEdge, INode } from 'yfiles'
 import {
   ProcessMiningProvider,
   useProcessMiningContext,
@@ -36,7 +36,8 @@ import {
   initializeFocus,
   initializeHover,
   initializeInputMode,
-  initializeSelection
+  initializeSelection,
+  initializeTransitionEventsClick
 } from './core/input.ts'
 import {
   extractGraph,
@@ -60,11 +61,16 @@ import { RenderTooltipProps } from './components/ProcessMiningTooltip.tsx'
 import { RenderPopupProps } from './components/ProcessMiningPopup.tsx'
 
 /**
+ * The id of the entity that passes through the process steps
+ */
+export type CaseId = number | string
+
+/**
  * An event that marks one step in the process.
  */
 export type ActivityEvent = {
   /** The id of the entity that passes through the process steps. */
-  caseId: number | string
+  caseId: CaseId
 
   /** The name of the activity that is executed in this event. */
   activity: string
@@ -105,6 +111,11 @@ export type ItemHoveredListener<ProcessStep> = (
   item: ProcessStep | null,
   oldItem?: ProcessStep | null
 ) => void
+
+/**
+ * A callback type invoked when transition event(s) has been clicked.
+ */
+export type TransitionEventsClickedListener = (transitionEventIds: CaseId[]) => void
 
 /**
  * A function that returns whether the given item matches the search needle.
@@ -209,6 +220,10 @@ export interface ProcessMiningProps<TEvent extends ActivityEvent, TNeedle> {
    * An optional callback that's called when the hovered item has changed.
    */
   onItemHover?: ItemHoveredListener<ProcessStep>
+  /**
+   * An optional callback that's called when transition event(s) is clicked.
+   */
+  onTransitionEventsClick?: TransitionEventsClickedListener
   /**
    * A string or a complex object to search for.
    *
@@ -363,6 +378,7 @@ const ProcessMiningCore = withGraphComponent(
     showHeatmap = true,
     showTransitionEvents = true,
     onItemHover,
+    onTransitionEventsClick,
     onSearch,
     onItemFocus,
     onItemSelect,
@@ -481,6 +497,33 @@ const ProcessMiningCore = withGraphComponent(
           ).itemHoverInputMode.removeHoveredItemChangedListener(hoverItemChangedListener)
       }
     }, [onItemHover])
+
+    useEffect(() => {
+      let transitionEventsClickedListener: (
+        inputMode: GraphViewerInputMode,
+        event: ClickEventArgs
+      ) => void
+
+      if (showTransitionEvents) {
+        transitionEventsClickedListener = initializeTransitionEventsClick(
+          onTransitionEventsClick,
+          graphComponent,
+          transitionEventVisualSupport
+        )
+      }
+
+      return () => {
+        // clean up
+        if (transitionEventsClickedListener) {
+          ;(graphComponent.inputMode as GraphViewerInputMode).removeCanvasClickedListener(
+            transitionEventsClickedListener
+          )
+          ;(graphComponent.inputMode as GraphViewerInputMode).removeItemClickedListener(
+            transitionEventsClickedListener
+          )
+        }
+      }
+    }, [onTransitionEventsClick, showTransitionEvents])
 
     useEffect(() => {
       // initialize the focus and selection to display the information of the selected element

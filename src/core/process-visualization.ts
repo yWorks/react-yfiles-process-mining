@@ -84,6 +84,7 @@ export function prepareProcessVisualization<TEvent extends ActivityEvent>(
             // add an item to the transition representing the event
             const { hue, size } = transitionEventStyling(event, nextEvent)
             transitionEventVisualSupport.addItem(
+              events[0].event.caseId,
               transition,
               false,
               event.timestamp,

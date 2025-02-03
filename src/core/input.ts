@@ -1,4 +1,5 @@
 import {
+  ClickEventArgs,
   type GraphComponent,
   GraphFocusIndicatorManager,
   GraphItemTypes,
@@ -13,6 +14,8 @@ import { enableSingleSelection } from './SingleSelectionHelper.ts'
 import { ProcessMiningModel } from '../ProcessMiningModel.ts'
 import { getProcessStepData, ProcessStep } from './process-graph-extraction.ts'
 import { enableSmartClickNavigation } from './configure-smart-click-navigation.ts'
+import type { TransitionEventVisualSupport } from '../styles/TransitionEventVisual.ts'
+import type { TransitionEventsClickedListener } from '../ProcessMining.tsx'
 
 /**
  * Set up the graph viewer input mode to and enables interactivity to expand and collapse subtrees.
@@ -71,6 +74,29 @@ export function initializeHover(
   inputMode.itemHoverInputMode.addHoveredItemChangedListener(hoverItemChangedListener)
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   return hoverItemChangedListener
+}
+
+/**
+ * Adds and returns the listener when transition events are clicked. The return is needed
+ * so that the listener can be removed from the graph.
+ */
+export function initializeTransitionEventsClick(
+  onTransitionEventsClick: TransitionEventsClickedListener | undefined,
+  graphComponent: GraphComponent,
+  transitionEventVisualSupport: TransitionEventVisualSupport
+) {
+  const inputMode = graphComponent.inputMode as GraphViewerInputMode
+  const transitionEventsClickedListener = (_: GraphViewerInputMode, evt: ClickEventArgs): void => {
+    if (onTransitionEventsClick) {
+      const clickedTransitionEntries = transitionEventVisualSupport.getEntriesAtLocation(
+        evt.location
+      )
+      onTransitionEventsClick(clickedTransitionEntries.map(entry => entry.caseId))
+    }
+  }
+  inputMode.addItemClickedListener(transitionEventsClickedListener)
+  inputMode.addCanvasClickedListener(transitionEventsClickedListener)
+  return transitionEventsClickedListener
 }
 
 /**

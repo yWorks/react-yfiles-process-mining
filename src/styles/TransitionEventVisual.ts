@@ -15,6 +15,7 @@ import {
   IVisibilityTestable,
   IVisualCreator,
   PathType,
+  Point,
   PolylineEdgeStyle,
   SimpleEdge,
   type Visual,
@@ -30,7 +31,10 @@ export function createTransitionEventVisualSupport(
 
 type TransitionEventWebGLProgram = WebGLProgram & { info: TransitionEventProgramInfo | undefined }
 
+type CaseId = number | string
+
 type ItemEntry = {
+  caseId: CaseId
   color: number
   startTime: number
   endTime: number
@@ -50,6 +54,31 @@ export class TransitionEventVisualSupport {
   constructor(graphComponent: GraphComponent) {
     this.transitionEventVisual = new TransitionEventVisual()
     graphComponent.addViewportChangedListener(() => (this.transitionEventVisual.dirty = true))
+  }
+
+  /**
+   * Returns all entries that are located at the given location at the current time
+   */
+  getEntriesAtLocation(location: Point): ItemEntry[] {
+    const currentTime = this.transitionEventVisual.time
+    const currentVisibleEntries = this.transitionEventVisual.entries.filter(
+      entry => entry.startTime < currentTime && entry.endTime > currentTime
+    )
+    const locationX = location.x
+    const locationY = location.y
+    return currentVisibleEntries.filter(entry => {
+      // calculate the exact position of every entry at the current time
+      const timeRatio = (currentTime - entry.startTime) / (entry.endTime - entry.startTime)
+      const x = entry.x0 + (entry.x1 - entry.x0) * timeRatio
+      const y = entry.y0 + (entry.y1 - entry.y0) * timeRatio
+      // filter out all entries that are within the mouse click area
+      return (
+        locationX > x - entry.size &&
+        locationX < x + entry.size &&
+        locationY > y - entry.size &&
+        locationY < y + entry.size
+      )
+    })
   }
 
   /**
@@ -85,6 +114,7 @@ export class TransitionEventVisualSupport {
 
   /**
    * Adds an event item to the transition event visual for the given edge and a specified timespan.
+   * @param caseId the case id of the item
    * @param path the edge that the item should follow
    * @param reverse the direction in which the item should move
    * @param startTime the time when the item starts traversing the edge
@@ -93,6 +123,7 @@ export class TransitionEventVisualSupport {
    * @param color a color value
    */
   addItem(
+    caseId: CaseId,
     path: IEdge,
     reverse: boolean,
     startTime: number,
@@ -100,7 +131,7 @@ export class TransitionEventVisualSupport {
     size: number,
     color: number
   ): void {
-    this.transitionEventVisual.addItem(path, reverse, startTime, endTime, size, color)
+    this.transitionEventVisual.addItem(caseId, path, reverse, startTime, endTime, size, color)
   }
 
   /**
@@ -289,7 +320,7 @@ void main() {
  */
 export class TransitionEventVisual extends WebGLVisual {
   private entryCount: number
-  private readonly entries: ItemEntry[]
+  public readonly entries: ItemEntry[]
   dirty: boolean
   private $time: number
   private timeDirty: boolean
@@ -318,7 +349,15 @@ export class TransitionEventVisual extends WebGLVisual {
     this.entryCount = 0
   }
 
-  addItem(path: IEdge, reverse: boolean, startTime = 0, endTime = 1, size = 10, color = 0.5): void {
+  addItem(
+    caseId: CaseId,
+    path: IEdge,
+    reverse: boolean,
+    startTime = 0,
+    endTime = 1,
+    size = 10,
+    color = 0.5
+  ): void {
     this.dirty = true
 
     const entries = this.entries
@@ -334,6 +373,7 @@ export class TransitionEventVisual extends WebGLVisual {
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
 
         entries.push({
+          caseId,
           color,
           startTime: segmentEndTime,
           endTime: segmentStartTime,
@@ -353,6 +393,7 @@ export class TransitionEventVisual extends WebGLVisual {
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
 
         entries.push({
+          caseId,
           color,
           startTime: segmentStartTime,
           endTime: segmentEndTime,
