@@ -21,31 +21,48 @@ By default, the <TypeLink type="ProcessMining" /> component provides bluish tran
 
 <Playground
   code={`
-function App () {
-  const [ showTransitionEvents, setShowTransitionEvents ] = useState(true)
-  const [ timestamp, setTimestamp ] = useState(5)
-  const maxCaseId = 100
+ function App() {
+   const [showTransitionEvents, setShowTransitionEvents] = useState(true);
+   const [timestamp, setTimestamp] = useState(5);
+   const maxCaseId = 100;
 
-  return (
-    <ProcessMining
-      eventLog={data}
-      timestamp={timestamp}
-      showTransitionEvents={showTransitionEvents}
-      transitionEvent={(previousEvent, _) => ({ size: 15, hue: (previousEvent.caseId / maxCaseId) * 360 })}
-      showHeatmap={false}>
-        <div className="options">
-          <div>
-            <span>Timestamp</span>
-            <input type="range" min={0} max={30} onInput={e => { setTimestamp(parseFloat((e.target as HTMLInputElement).value)) }} value={timestamp}/ >
-          </div>
-          <div>
-            <input type="checkbox" onChange={(event) => setShowTransitionEvents(event.target.checked)} checked={showTransitionEvents}/ >
-            <span>Hide Transition Events</span>
-          </div>
-        </div>
-      </ProcessMining>
-  )
-}
+   return (
+     <ProcessMining
+       eventLog={data}
+       timestamp={timestamp}
+       showTransitionEvents={showTransitionEvents}
+       transitionEventStyling={(previousEvent, _) => ({
+         size: 15,
+         hue: (parseInt(previousEvent.caseId as string) / maxCaseId) * 360,
+       })}
+       showHeatmap={false}
+     >
+       <div className="options">
+         <div>
+           <span>Timestamp</span>
+           <input
+             type="range"
+             min={0}
+             max={30}
+             onInput={(e) => {
+               setTimestamp(parseFloat((e.target as HTMLInputElement).value));
+             }}
+             value={timestamp}
+           />
+         </div>
+         <div>
+           <input
+             type="checkbox"
+             onChange={(event) => setShowTransitionEvents(event.target.checked)}
+             checked={showTransitionEvents}
+           />
+           <span>Hide Transition Events</span>
+         </div>
+       </div>
+     </ProcessMining>
+   );
+ }
+
 `}
   data={`[
   { caseId: 0, activity: 'Start', timestamp: 8.383561495922297, duration: 0.0006804154279300233 },
