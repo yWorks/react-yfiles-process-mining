@@ -1,14 +1,15 @@
 import {
+  Arrow,
+  ArrowType,
   BaseClass,
   type CanvasComponent,
   Color,
   type GeneralPath,
   GraphComponent,
-  IArrow,
   IBoundsProvider,
   type ICanvasContext,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
+  type IRenderTreeElement,
+  IObjectRenderer,
   type IEdge,
   IHitTestable,
   type IRenderContext,
@@ -20,7 +21,7 @@ import {
   SimpleEdge,
   type Visual,
   WebGLVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { type WebGLBufferData, WebGLProgramInfo } from './webgl-utils.ts'
 
 export function createTransitionEventVisualSupport(
@@ -45,15 +46,21 @@ type ItemEntry = {
   size: number
 }
 
-const dummyEdgeStyle = new PolylineEdgeStyle({ sourceArrow: IArrow.NONE, targetArrow: IArrow.NONE })
+const dummyEdgeStyle = new PolylineEdgeStyle({
+  sourceArrow: new Arrow(ArrowType.NONE),
+  targetArrow: new Arrow(ArrowType.NONE)
+})
 
 export class TransitionEventVisualSupport {
   private readonly transitionEventVisual: TransitionEventVisual
-  private transitionEventObject: ICanvasObject | null = null
+  private transitionEventObject: IRenderTreeElement | null = null
 
   constructor(graphComponent: GraphComponent) {
     this.transitionEventVisual = new TransitionEventVisual()
-    graphComponent.addViewportChangedListener(() => (this.transitionEventVisual.dirty = true))
+    graphComponent.addEventListener(
+      'viewport-changed',
+      () => (this.transitionEventVisual.dirty = true)
+    )
   }
 
   /**
@@ -87,7 +94,8 @@ export class TransitionEventVisualSupport {
   showVisual(canvas: CanvasComponent): void {
     // make sure that no canvas object is added before the last is cleaned up
     if (!this.transitionEventObject) {
-      this.transitionEventObject = canvas.highlightGroup.addChild(
+      this.transitionEventObject = canvas.renderTree.highlightGroup.renderTree.createElement(
+        canvas.renderTree.highlightGroup,
         this.transitionEventVisual,
         new TransitionEventCanvasObjectDescriptor()
       )
@@ -97,9 +105,9 @@ export class TransitionEventVisualSupport {
   /**
    * Installs a transition event visual in the given canvas component.
    */
-  hideVisual(): void {
+  hideVisual(canvas: CanvasComponent): void {
     if (this.transitionEventObject) {
-      this.transitionEventObject.remove()
+      canvas.renderTree.remove(this.transitionEventObject)
       this.transitionEventObject = null
     }
   }
@@ -514,10 +522,7 @@ export class TransitionEventVisual extends WebGLVisual {
   }
 }
 
-class TransitionEventCanvasObjectDescriptor extends BaseClass(
-  ICanvasObjectDescriptor,
-  IVisualCreator
-) {
+class TransitionEventCanvasObjectDescriptor extends BaseClass(IObjectRenderer, IVisualCreator) {
   private transitionEventVisual: TransitionEventVisual | null = null
   getBoundsProvider(forUserObject: unknown): IBoundsProvider {
     return IBoundsProvider.UNBOUNDED
@@ -536,8 +541,8 @@ class TransitionEventCanvasObjectDescriptor extends BaseClass(
     return this
   }
 
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return canvasObject.dirty || (canvasObject.userObject as TransitionEventVisual).needsRepaint
+  isDirty(context: ICanvasContext, canvasObject: IRenderTreeElement): boolean {
+    return canvasObject.dirty || (canvasObject.tag as TransitionEventVisual).needsRepaint
   }
 
   createVisual(context: IRenderContext): Visual | null {

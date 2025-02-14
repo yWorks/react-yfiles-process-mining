@@ -1,4 +1,4 @@
-import { GraphComponent } from 'yfiles'
+import { GraphComponent } from '@yfiles/yfiles'
 import { ExportSettings, PrintSettings } from '@yworks/react-yfiles-core'
 import { ProcessStep, Transition } from './core/process-graph-extraction.ts'
 import { ActivityEvent, LayoutOptions } from './ProcessMining.tsx'

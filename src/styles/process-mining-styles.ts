@@ -1,11 +1,4 @@
-import {
-  GraphComponent,
-  GraphHighlightIndicatorManager,
-  PolylineEdgeStyle,
-  Rect,
-  Size,
-  VoidNodeStyle
-} from 'yfiles'
+import { GraphComponent, PolylineEdgeStyle, Rect, Size } from '@yfiles/yfiles'
 import { ComponentType, Dispatch, SetStateAction } from 'react'
 import {
   convertToPolylineEdgeStyle,
@@ -37,9 +30,7 @@ export function initializeNodeDefaultStyle(
   }
 
   // Hide the default highlight in favor of the CSS highlighting from the template styles
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graphComponent.highlightIndicatorManager.enabled = false
 }
 
 /**

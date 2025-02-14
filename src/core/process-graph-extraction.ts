@@ -1,10 +1,10 @@
 import { ActivityEvent } from '../ProcessMining.tsx'
-import { Class, GraphComponent, type IEdge, IEnumerable, type INode, LayoutExecutor } from 'yfiles'
+import { GraphComponent, type IEdge, IEnumerable, type INode, LayoutExecutor } from '@yfiles/yfiles'
 import { HeatData } from '../styles/HeatData.ts'
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
 // tools it from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
+LayoutExecutor.ensure()
 
 /**
  * Type that describes one step in the process.

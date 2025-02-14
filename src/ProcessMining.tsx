@@ -25,7 +25,13 @@ import {
   useReactNodeRendering,
   withGraphComponent
 } from '@yworks/react-yfiles-core'
-import { ClickEventArgs, GraphViewerInputMode, ICanvasObject, IEdge, INode } from 'yfiles'
+import {
+  ClickEventArgs,
+  GraphViewerInputMode,
+  IEdge,
+  INode,
+  IRenderTreeElement
+} from '@yfiles/yfiles'
 import {
   ProcessMiningProvider,
   useProcessMiningContext,
@@ -274,14 +280,14 @@ export interface ProcessMiningProps<TEvent extends ActivityEvent, TNeedle> {
    * The optional position of the popup. The default is 'north'.
    */
   popupPosition?:
-    | 'east'
-    | 'north'
-    | 'north-east'
-    | 'north-west'
-    | 'south'
-    | 'south-east'
-    | 'south-west'
-    | 'west'
+    | 'bottom'
+    | 'left'
+    | 'right'
+    | 'top'
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
   /**
    * An optional component used for rendering a custom popup.
    */
@@ -414,7 +420,7 @@ const ProcessMiningCore = withGraphComponent(
     }, [])
 
     useEffect(() => {
-      checkStylesheetLoaded(graphComponent.div, 'react-yfiles-process-mining')
+      checkStylesheetLoaded(graphComponent.htmlElement, 'react-yfiles-process-mining')
     }, [])
 
     useEffect(() => {
@@ -440,7 +446,7 @@ const ProcessMiningCore = withGraphComponent(
     }, [transitionStyles])
 
     useEffect(() => {
-      let heatMapCanvasObject: ICanvasObject | null = null
+      let heatMapCanvasObject: IRenderTreeElement | null = null
 
       if (showHeatmap) {
         // this function provides the heat for a node or edge at a specific time
@@ -455,14 +461,14 @@ const ProcessMiningCore = withGraphComponent(
 
       return () => {
         if (heatMapCanvasObject) {
-          heatMapCanvasObject.remove()
+          heatMapCanvasObject.renderTree.remove(heatMapCanvasObject)
           heatMapCanvasObject = null
         }
       }
     }, [graphComponent, showHeatmap, timestamp])
 
     useEffect(() => {
-      transitionEventVisualSupport.hideVisual()
+      transitionEventVisualSupport.hideVisual(graphComponent)
       if (showTransitionEvents) {
         // add the item visual to be able to render dots for the traversing events
         transitionEventVisualSupport.showVisual(graphComponent)
@@ -492,16 +498,17 @@ const ProcessMiningCore = withGraphComponent(
       return () => {
         // clean up
         hoverItemChangedListener &&
-          (
-            graphComponent.inputMode as GraphViewerInputMode
-          ).itemHoverInputMode.removeHoveredItemChangedListener(hoverItemChangedListener)
+          (graphComponent.inputMode as GraphViewerInputMode).itemHoverInputMode.removeEventListener(
+            'hovered-item-changed',
+            hoverItemChangedListener
+          )
       }
     }, [onItemHover])
 
     useEffect(() => {
       let transitionEventsClickedListener: (
-        inputMode: GraphViewerInputMode,
-        event: ClickEventArgs
+        event: ClickEventArgs,
+        inputMode: GraphViewerInputMode
       ) => void
 
       if (showTransitionEvents) {
@@ -515,10 +522,12 @@ const ProcessMiningCore = withGraphComponent(
       return () => {
         // clean up
         if (transitionEventsClickedListener) {
-          ;(graphComponent.inputMode as GraphViewerInputMode).removeCanvasClickedListener(
+          ;(graphComponent.inputMode as GraphViewerInputMode).removeEventListener(
+            'canvas-clicked',
             transitionEventsClickedListener
           )
-          ;(graphComponent.inputMode as GraphViewerInputMode).removeItemClickedListener(
+          ;(graphComponent.inputMode as GraphViewerInputMode).removeEventListener(
+            'item-clicked',
             transitionEventsClickedListener
           )
         }
@@ -533,9 +542,11 @@ const ProcessMiningCore = withGraphComponent(
       return () => {
         // clean up the listeners
         currentItemChangedListener &&
-          graphComponent.removeCurrentItemChangedListener(currentItemChangedListener)
+          graphComponent.removeEventListener('current-item-changed', currentItemChangedListener)
         selectedItemChangedListener &&
-          graphComponent.selection.removeItemSelectionChangedListener(selectedItemChangedListener)
+          graphComponent.selection.removeEventListener('item-added', selectedItemChangedListener)
+        selectedItemChangedListener &&
+          graphComponent.selection.removeEventListener('item-removed', selectedItemChangedListener)
       }
     }, [onItemFocus, onItemSelect])
 
