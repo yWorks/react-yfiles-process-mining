@@ -11,8 +11,6 @@ import {
   CanExecuteCommandArgs
 } from '@yfiles/yfiles'
 
-// TODO move to core?
-
 type Recognizer = (evt: EventArgs, eventSource: any) => boolean
 
 let commandBindings: KeyboardInputModeBinding[] = []

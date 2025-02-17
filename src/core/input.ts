@@ -68,7 +68,6 @@ export function initializeHover(
     }
   }
   inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', hoverItemChangedListener)
-  inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   return hoverItemChangedListener
 }
 
@@ -146,8 +145,7 @@ export function initializeSelection(
  * Initializes the highlights for selected or focused elements.
  */
 function initializeHighlights(graphComponent: GraphComponent): void {
-  graphComponent.selectionIndicatorManager.enabled = false
-
-  // Hide the default focus highlight in favor of the CSS highlighting from the template styles
-  graphComponent.focusIndicatorManager.enabled = false
+  // Hide the default select/focus highlight in favor of the CSS highlighting from the template styles
+  graphComponent.graph.decorator.nodes.selectionRenderer.hide()
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
