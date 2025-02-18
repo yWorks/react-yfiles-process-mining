@@ -277,7 +277,7 @@ export interface ProcessMiningProps<TEvent extends ActivityEvent, TNeedle> {
    */
   renderContextMenu?: ComponentType<RenderContextMenuProps>
   /**
-   * The optional position of the popup. The default is 'north'.
+   * The optional position of the popup. The default is 'top'.
    */
   popupPosition?:
     | 'bottom'
