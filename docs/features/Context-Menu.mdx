@@ -20,7 +20,7 @@ To adjust the context menu visualization, add a custom React component using the
         <ProcessMining
           eventLog={data}
           timestamp={5}
-          renderContextMenu={({item}) => 'label' in item && item.label && (
+          renderContextMenu={({item}) => item && 'label' in item && item.label && (
            <button onClick={() => alert(\`\${item.label} clicked!\`)}>Click here!</button>
           )}
         ></ProcessMining>
