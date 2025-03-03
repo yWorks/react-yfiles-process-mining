@@ -1,4 +1,4 @@
-import type { IRenderContext } from 'yfiles'
+import type { IRenderContext } from '@yfiles/yfiles'
 
 export class WebGLBufferData<T extends BufferSource> {
   private dirty = true

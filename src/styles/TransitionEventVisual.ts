@@ -1,25 +1,27 @@
 import {
+  Arrow,
+  ArrowType,
   BaseClass,
   type CanvasComponent,
   Color,
   type GeneralPath,
   GraphComponent,
-  IArrow,
   IBoundsProvider,
   type ICanvasContext,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
+  type IRenderTreeElement,
+  IObjectRenderer,
   type IEdge,
   IHitTestable,
   type IRenderContext,
   IVisibilityTestable,
   IVisualCreator,
   PathType,
+  Point,
   PolylineEdgeStyle,
   SimpleEdge,
   type Visual,
   WebGLVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { type WebGLBufferData, WebGLProgramInfo } from './webgl-utils.ts'
 
 export function createTransitionEventVisualSupport(
@@ -30,7 +32,10 @@ export function createTransitionEventVisualSupport(
 
 type TransitionEventWebGLProgram = WebGLProgram & { info: TransitionEventProgramInfo | undefined }
 
+type CaseId = number | string
+
 type ItemEntry = {
+  caseId: CaseId
   color: number
   startTime: number
   endTime: number
@@ -41,15 +46,46 @@ type ItemEntry = {
   size: number
 }
 
-const dummyEdgeStyle = new PolylineEdgeStyle({ sourceArrow: IArrow.NONE, targetArrow: IArrow.NONE })
+const dummyEdgeStyle = new PolylineEdgeStyle({
+  sourceArrow: new Arrow(ArrowType.NONE),
+  targetArrow: new Arrow(ArrowType.NONE)
+})
 
 export class TransitionEventVisualSupport {
   private readonly transitionEventVisual: TransitionEventVisual
-  private transitionEventObject: ICanvasObject | null = null
+  private transitionEventObject: IRenderTreeElement | null = null
 
   constructor(graphComponent: GraphComponent) {
     this.transitionEventVisual = new TransitionEventVisual()
-    graphComponent.addViewportChangedListener(() => (this.transitionEventVisual.dirty = true))
+    graphComponent.addEventListener(
+      'viewport-changed',
+      () => (this.transitionEventVisual.dirty = true)
+    )
+  }
+
+  /**
+   * Returns all entries that are located at the given location at the current time
+   */
+  getEntriesAtLocation(location: Point): ItemEntry[] {
+    const currentTime = this.transitionEventVisual.time
+    const currentVisibleEntries = this.transitionEventVisual.entries.filter(
+      entry => entry.startTime < currentTime && entry.endTime > currentTime
+    )
+    const locationX = location.x
+    const locationY = location.y
+    return currentVisibleEntries.filter(entry => {
+      // calculate the exact position of every entry at the current time
+      const timeRatio = (currentTime - entry.startTime) / (entry.endTime - entry.startTime)
+      const x = entry.x0 + (entry.x1 - entry.x0) * timeRatio
+      const y = entry.y0 + (entry.y1 - entry.y0) * timeRatio
+      // filter out all entries that are within the mouse click area
+      return (
+        locationX > x - entry.size &&
+        locationX < x + entry.size &&
+        locationY > y - entry.size &&
+        locationY < y + entry.size
+      )
+    })
   }
 
   /**
@@ -58,7 +94,8 @@ export class TransitionEventVisualSupport {
   showVisual(canvas: CanvasComponent): void {
     // make sure that no canvas object is added before the last is cleaned up
     if (!this.transitionEventObject) {
-      this.transitionEventObject = canvas.highlightGroup.addChild(
+      this.transitionEventObject = canvas.renderTree.highlightGroup.renderTree.createElement(
+        canvas.renderTree.highlightGroup,
         this.transitionEventVisual,
         new TransitionEventCanvasObjectDescriptor()
       )
@@ -68,9 +105,9 @@ export class TransitionEventVisualSupport {
   /**
    * Installs a transition event visual in the given canvas component.
    */
-  hideVisual(): void {
+  hideVisual(canvas: CanvasComponent): void {
     if (this.transitionEventObject) {
-      this.transitionEventObject.remove()
+      canvas.renderTree.remove(this.transitionEventObject)
       this.transitionEventObject = null
     }
   }
@@ -85,6 +122,7 @@ export class TransitionEventVisualSupport {
 
   /**
    * Adds an event item to the transition event visual for the given edge and a specified timespan.
+   * @param caseId the case id of the item
    * @param path the edge that the item should follow
    * @param reverse the direction in which the item should move
    * @param startTime the time when the item starts traversing the edge
@@ -93,6 +131,7 @@ export class TransitionEventVisualSupport {
    * @param color a color value
    */
   addItem(
+    caseId: CaseId,
     path: IEdge,
     reverse: boolean,
     startTime: number,
@@ -100,7 +139,7 @@ export class TransitionEventVisualSupport {
     size: number,
     color: number
   ): void {
-    this.transitionEventVisual.addItem(path, reverse, startTime, endTime, size, color)
+    this.transitionEventVisual.addItem(caseId, path, reverse, startTime, endTime, size, color)
   }
 
   /**
@@ -289,7 +328,7 @@ void main() {
  */
 export class TransitionEventVisual extends WebGLVisual {
   private entryCount: number
-  private readonly entries: ItemEntry[]
+  public readonly entries: ItemEntry[]
   dirty: boolean
   private $time: number
   private timeDirty: boolean
@@ -318,7 +357,15 @@ export class TransitionEventVisual extends WebGLVisual {
     this.entryCount = 0
   }
 
-  addItem(path: IEdge, reverse: boolean, startTime = 0, endTime = 1, size = 10, color = 0.5): void {
+  addItem(
+    caseId: CaseId,
+    path: IEdge,
+    reverse: boolean,
+    startTime = 0,
+    endTime = 1,
+    size = 10,
+    color = 0.5
+  ): void {
     this.dirty = true
 
     const entries = this.entries
@@ -334,6 +381,7 @@ export class TransitionEventVisual extends WebGLVisual {
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
 
         entries.push({
+          caseId,
           color,
           startTime: segmentEndTime,
           endTime: segmentStartTime,
@@ -353,6 +401,7 @@ export class TransitionEventVisual extends WebGLVisual {
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
 
         entries.push({
+          caseId,
           color,
           startTime: segmentStartTime,
           endTime: segmentEndTime,
@@ -473,10 +522,7 @@ export class TransitionEventVisual extends WebGLVisual {
   }
 }
 
-class TransitionEventCanvasObjectDescriptor extends BaseClass(
-  ICanvasObjectDescriptor,
-  IVisualCreator
-) {
+class TransitionEventCanvasObjectDescriptor extends BaseClass(IObjectRenderer, IVisualCreator) {
   private transitionEventVisual: TransitionEventVisual | null = null
   getBoundsProvider(forUserObject: unknown): IBoundsProvider {
     return IBoundsProvider.UNBOUNDED
@@ -495,8 +541,8 @@ class TransitionEventCanvasObjectDescriptor extends BaseClass(
     return this
   }
 
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return canvasObject.dirty || (canvasObject.userObject as TransitionEventVisual).needsRepaint
+  isDirty(context: ICanvasContext, canvasObject: IRenderTreeElement): boolean {
+    return canvasObject.dirty || (canvasObject.tag as TransitionEventVisual).needsRepaint
   }
 
   createVisual(context: IRenderContext): Visual | null {

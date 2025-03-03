@@ -1,18 +1,18 @@
 import {
+  ClickEventArgs,
   type GraphComponent,
-  GraphFocusIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
   HoveredItemChangedEventArgs,
   INode,
-  ItemHoverInputMode,
-  ShowFocusPolicy,
-  VoidNodeStyle
-} from 'yfiles'
+  ItemHoverInputMode
+} from '@yfiles/yfiles'
 import { enableSingleSelection } from './SingleSelectionHelper.ts'
 import { ProcessMiningModel } from '../ProcessMiningModel.ts'
 import { getProcessStepData, ProcessStep } from './process-graph-extraction.ts'
 import { enableSmartClickNavigation } from './configure-smart-click-navigation.ts'
+import type { TransitionEventVisualSupport } from '../styles/TransitionEventVisual.ts'
+import type { TransitionEventsClickedListener } from '../ProcessMining.tsx'
 
 /**
  * Set up the graph viewer input mode to and enables interactivity to expand and collapse subtrees.
@@ -37,7 +37,7 @@ export function initializeInputMode(
   graphComponent.inputMode = graphViewerInputMode
 
   if (smartClickNavigation) {
-    enableSmartClickNavigation(graphViewerInputMode)
+    enableSmartClickNavigation(graphViewerInputMode, graphComponent)
   }
 
   enableSingleSelection(graphComponent)
@@ -48,29 +48,50 @@ export function initializeHover(
   graphComponent: GraphComponent
 ) {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
-  let hoverItemChangedListener = (
-    sender: ItemHoverInputMode,
-    evt: HoveredItemChangedEventArgs
-  ) => {}
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
-  hoverItemChangedListener = (_, evt): void => {
+  const hoverItemChangedListener = (
+    evt: HoveredItemChangedEventArgs,
+    _: ItemHoverInputMode
+  ): void => {
     // we use the highlight manager to highlight hovered items
     const manager = graphComponent.highlightIndicatorManager
     if (evt.oldItem) {
-      manager.removeHighlight(evt.oldItem)
+      manager.items?.remove(evt.oldItem)
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition,@typescript-eslint/strict-boolean-expressions
     if (evt.item) {
-      manager.addHighlight(evt.item)
+      manager.items?.add(evt.item)
     }
 
     if (onHover) {
       onHover(evt.item?.tag, evt.oldItem?.tag)
     }
   }
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener(hoverItemChangedListener)
-  inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
+  inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', hoverItemChangedListener)
   return hoverItemChangedListener
+}
+
+/**
+ * Adds and returns the listener when transition events are clicked. The return is needed
+ * so that the listener can be removed from the graph.
+ */
+export function initializeTransitionEventsClick(
+  onTransitionEventsClick: TransitionEventsClickedListener | undefined,
+  graphComponent: GraphComponent,
+  transitionEventVisualSupport: TransitionEventVisualSupport
+) {
+  const inputMode = graphComponent.inputMode as GraphViewerInputMode
+  const transitionEventsClickedListener = (evt: ClickEventArgs, _: GraphViewerInputMode): void => {
+    if (onTransitionEventsClick) {
+      const clickedTransitionEntries = transitionEventVisualSupport.getEntriesAtLocation(
+        evt.location
+      )
+      onTransitionEventsClick(clickedTransitionEntries.map(entry => entry.caseId))
+    }
+  }
+  inputMode.addEventListener('item-clicked', transitionEventsClickedListener)
+  inputMode.addEventListener('canvas-clicked', transitionEventsClickedListener)
+  return transitionEventsClickedListener
 }
 
 /**
@@ -93,7 +114,7 @@ export function initializeFocus(
       }
     }
   }
-  graphComponent.addCurrentItemChangedListener(currentItemChangedListener)
+  graphComponent.addEventListener('current-item-changed', currentItemChangedListener)
   return currentItemChangedListener
 }
 
@@ -109,13 +130,14 @@ export function initializeSelection(
   if (onSelect) {
     // display information about the current employee
     itemSelectionChangedListener = () => {
-      const selectedItems = graphComponent.selection.selectedNodes
+      const selectedItems = graphComponent.selection.nodes
         .map(node => getProcessStepData(node))
         .toArray()
       onSelect(selectedItems)
     }
   }
-  graphComponent.selection.addItemSelectionChangedListener(itemSelectionChangedListener)
+  graphComponent.selection.addEventListener('item-added', itemSelectionChangedListener)
+  graphComponent.selection.addEventListener('item-removed', itemSelectionChangedListener)
   return itemSelectionChangedListener
 }
 
@@ -123,11 +145,7 @@ export function initializeSelection(
  * Initializes the highlights for selected or focused elements.
  */
 function initializeHighlights(graphComponent: GraphComponent): void {
-  graphComponent.selectionIndicatorManager.enabled = false
-
-  // Hide the default focus highlight in favor of the CSS highlighting from the template styles
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    showFocusPolicy: ShowFocusPolicy.ALWAYS,
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  // Hide the default select/focus highlight in favor of the CSS highlighting from the template styles
+  graphComponent.graph.decorator.nodes.selectionRenderer.hide()
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }

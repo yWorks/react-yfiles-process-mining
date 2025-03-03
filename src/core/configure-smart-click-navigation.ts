@@ -6,7 +6,7 @@ import {
   INode,
   ItemClickedEventArgs,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Enables smart navigation for large graphs, i.e., clicked elements will be moved to a focus point.
@@ -24,11 +24,12 @@ import {
  */
 export function enableSmartClickNavigation(
   graphInputMode: GraphViewerInputMode,
+  graphComponent: GraphComponent,
   mode: 'zoom-to-mouse-location' | 'zoom-to-viewport-center' = 'zoom-to-viewport-center'
 ) {
-  graphInputMode.addItemLeftClickedListener(
-    async (sender: object, event: ItemClickedEventArgs<IModelItem>): Promise<void> => {
-      const graphComponent = graphInputMode.inputModeContext!.canvasComponent as GraphComponent
+  graphInputMode.addEventListener(
+    'item-left-clicked',
+    async (event: ItemClickedEventArgs<IModelItem>): Promise<void> => {
       if (!event.handled) {
         const item = event.item
         // gets the point where we should zoom in
@@ -37,9 +38,9 @@ export function enableSmartClickNavigation(
           if (mode === 'zoom-to-mouse-location') {
             // zooms to the new location of the mouse
             const offset = event.location.subtract(graphComponent.viewport.center)
-            await graphComponent.zoomToAnimated(location.subtract(offset), graphComponent.zoom)
+            await graphComponent.zoomToAnimated(graphComponent.zoom, location.subtract(offset))
           } else {
-            await graphComponent.zoomToAnimated(location, graphComponent.zoom)
+            await graphComponent.zoomToAnimated(graphComponent.zoom, location)
           }
         }
       }

@@ -14,6 +14,7 @@ const maxTime = 30
 function TransitionEvents() {
   const [timestamp, setTimestamp] = useState(5)
   const [showTransitionEvents, setShowTransitionEvents] = useState(true)
+  const [clickedEventIds, setClickedEventIds] = useState('')
 
   const { startAnimation, stopAnimation } = useProcessMiningContext()
 
@@ -35,6 +36,9 @@ function TransitionEvents() {
               hue: ((Math.random() * 0.2 + 0.5) / 4 + 0.4) * 360
             }
         }
+      }}
+      onTransitionEventsClick={clickedEventIds => {
+        setClickedEventIds(JSON.stringify(clickedEventIds))
       }}
     >
       <div
@@ -71,6 +75,8 @@ function TransitionEvents() {
             setShowTransitionEvents((e.target as HTMLInputElement).checked)
           }}
         />
+        <label>Transition Event IDs</label>
+        <textarea readOnly value={clickedEventIds} />
       </div>
     </ProcessMining>
   )

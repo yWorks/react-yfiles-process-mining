@@ -1,4 +1,4 @@
-import { Animator, GraphComponent } from 'yfiles'
+import { Animator, GraphComponent } from '@yfiles/yfiles'
 
 /**
  * This controller manages the animation of the heatmap and transition events.
@@ -15,7 +15,7 @@ export class AnimationController {
   constructor(public graphComponent: GraphComponent) {
     this.running = false
     this.animator = new Animator({
-      canvas: graphComponent,
+      canvasComponent: graphComponent,
       allowUserInteraction: true,
       autoInvalidation: true
     })

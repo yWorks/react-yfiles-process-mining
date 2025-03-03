@@ -1,4 +1,4 @@
-import { IEnumerable, IGraph } from 'yfiles'
+import { IEnumerable, IGraph } from '@yfiles/yfiles'
 import { ActivityEvent } from '../ProcessMining.tsx'
 import { getProcessStepData, getTransitionData } from './process-graph-extraction.ts'
 import { TransitionEventVisualSupport } from '../styles/TransitionEventVisual.ts'
@@ -44,7 +44,7 @@ export function prepareProcessVisualization<TEvent extends ActivityEvent>(
   graph.edges.forEach(transition => {
     const transitionData = getTransitionData(transition)
     let allEvents
-    if (transition.isSelfloop) {
+    if (transition.isSelfLoop) {
       allEvents = eventsByActivities[transitionData.sourceLabel]
       allEvents.sort((event1, event2) => event1.timestamp - event2.timestamp)
       allEvents = allEvents.map((event, index) => ({
@@ -84,6 +84,7 @@ export function prepareProcessVisualization<TEvent extends ActivityEvent>(
             // add an item to the transition representing the event
             const { hue, size } = transitionEventStyling(event, nextEvent)
             transitionEventVisualSupport.addItem(
+              events[0].event.caseId,
               transition,
               false,
               event.timestamp,

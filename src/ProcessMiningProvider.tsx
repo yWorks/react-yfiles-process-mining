@@ -11,17 +11,17 @@ import {
 import { ProcessMiningModel, ProcessMiningModelInternal } from './ProcessMiningModel.ts'
 import {
   GraphComponent,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  HierarchicLayoutEdgeLayoutDescriptor,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
-  ICommand,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
+  HierarchicalLayoutEdgeDescriptor,
+  HierarchicalLayoutRoutingStyle,
+  RoutingStyleDescriptor,
+  Command,
   IGraph,
   INode,
   MutableRectangle,
-  NodeHalo
-} from 'yfiles'
+  Insets
+} from '@yfiles/yfiles'
 import { getProcessStepData, ProcessStep, Transition } from './core/process-graph-extraction.ts'
 import { AnimationController } from './animation/AnimationController.ts'
 import { ActivityEvent, LayoutOptions } from './ProcessMining.tsx'
@@ -242,32 +242,32 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
 
     async applyLayout(layoutOptions = defaultLayoutOptions, morphLayout = false) {
       if (_showTransitionEvents && _eventLog) {
-        _transitionEventVisualSupport.hideVisual()
+        _transitionEventVisualSupport.hideVisual(graphComponent)
         _transitionEventVisualSupport.clearItems()
       }
 
-      const layout = new HierarchicLayout({
+      const layout = new HierarchicalLayout({
         layoutOrientation: layoutOptions.direction,
         minimumLayerDistance: layoutOptions.minimumLayerDistance,
-        nodeToNodeDistance: layoutOptions.nodeToNodeDistance,
+        nodeDistance: layoutOptions.nodeToNodeDistance,
         nodeToEdgeDistance: layoutOptions.nodeToEdgeDistance,
-        maximumDuration: layoutOptions.maximumDuration,
+        stopDuration: layoutOptions.maximumDuration,
         automaticEdgeGrouping: layoutOptions.edgeGrouping,
-        edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({
-          routingStyle: new HierarchicLayoutRoutingStyle(
-            HierarchicLayoutEdgeRoutingStyle.CURVED,
+        defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({
+          routingStyleDescriptor: new RoutingStyleDescriptor(
+            HierarchicalLayoutRoutingStyle.CURVED,
             false
           )
         })
       })
-      const layoutData = new HierarchicLayoutData({
-        nodeHalos: () => NodeHalo.create(5)
+      const layoutData = new HierarchicalLayoutData({
+        nodeMargins: new Insets(5)
       })
-      await graphComponent.morphLayout({
+      await graphComponent.applyLayoutAnimated({
         layout,
-        morphDuration: morphLayout ? '1s' : '0s',
+        animationDuration: morphLayout ? '1s' : '0s',
         layoutData,
-        targetBoundsInsets: 50
+        targetBoundsPadding: 50
       })
 
       if (_showTransitionEvents && _eventLog) {
@@ -291,19 +291,19 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
     zoomTo,
 
     zoomIn() {
-      ICommand.INCREASE_ZOOM.execute(null, graphComponent)
+      graphComponent.executeCommand(Command.INCREASE_ZOOM, null)
     },
 
     zoomOut() {
-      ICommand.DECREASE_ZOOM.execute(null, graphComponent)
+      graphComponent.executeCommand(Command.DECREASE_ZOOM, null)
     },
 
     zoomToOriginal() {
-      ICommand.ZOOM.execute(1.0, graphComponent)
+      graphComponent.executeCommand(Command.ZOOM, 1.0)
     },
 
     fitContent() {
-      ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+      graphComponent.executeCommand(Command.FIT_GRAPH_BOUNDS, null)
     },
 
     async exportToSvg(exportSettings: ExportSettings) {
