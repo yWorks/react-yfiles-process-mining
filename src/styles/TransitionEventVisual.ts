@@ -7,12 +7,11 @@ import {
   type GeneralPath,
   GraphComponent,
   IBoundsProvider,
-  type ICanvasContext,
-  type IRenderTreeElement,
-  IObjectRenderer,
   type IEdge,
   IHitTestable,
+  IObjectRenderer,
   type IRenderContext,
+  type IRenderTreeElement,
   IVisibilityTestable,
   IVisualCreator,
   PathType,
@@ -97,7 +96,7 @@ export class TransitionEventVisualSupport {
       this.transitionEventObject = canvas.renderTree.highlightGroup.renderTree.createElement(
         canvas.renderTree.highlightGroup,
         this.transitionEventVisual,
-        new TransitionEventCanvasObjectDescriptor()
+        new TransitionEventItemRenderer()
       )
     }
   }
@@ -151,14 +150,14 @@ export class TransitionEventVisualSupport {
 }
 
 function getGeneralPath(path: IEdge): GeneralPath {
-  const dummyEdge = new SimpleEdge({
+  const previewEdge = new SimpleEdge({
     sourcePort: path.sourcePort,
     targetPort: path.targetPort,
     style: dummyEdgeStyle,
     bends: path.bends
   })
 
-  return dummyEdge.style.renderer.getPathGeometry(dummyEdge, dummyEdge.style).getPath()!
+  return previewEdge.style.renderer.getPathGeometry(previewEdge, previewEdge.style).getPath()!
 }
 
 class TransitionEventProgramInfo extends WebGLProgramInfo {
@@ -327,24 +326,19 @@ void main() {
  * A render visual that draws transition events in a canvas using WebGL.
  */
 export class TransitionEventVisual extends WebGLVisual {
-  private entryCount: number
   public readonly entries: ItemEntry[]
   dirty: boolean
   private $time: number
-  private timeDirty: boolean
 
   constructor() {
     super()
-    this.timeDirty = true
     this.$time = 0
     this.entries = []
-    this.entryCount = 0
     this.dirty = false
   }
 
   set time(value: number) {
     this.$time = value
-    this.timeDirty = true
   }
 
   get time(): number {
@@ -354,7 +348,6 @@ export class TransitionEventVisual extends WebGLVisual {
   clearItems(): void {
     this.dirty = true
     this.entries.length = 0
-    this.entryCount = 0
   }
 
   addItem(
@@ -450,33 +443,27 @@ export class TransitionEventVisual extends WebGLVisual {
     }
   }
 
-  expungeOldEntries(): void {
-    const currentTime = this.time
-    const entries = this.entries
-    for (let i = 0; i < entries.length; i++) {
-      if (entries[i].endTime < currentTime) {
-        entries.splice(i, 1)
-        i--
-      }
-    }
-  }
-
   /**
    * Paints onto the context using WebGL item styles.
    */
   render(renderContext: IRenderContext, gl: WebGLRenderingContext): void {
     gl.getExtension('GL_OES_standard_derivatives')
     gl.getExtension('OES_standard_derivatives')
-    const program: TransitionEventWebGLProgram = renderContext.webGLSupport.useProgram(
+    let program: TransitionEventWebGLProgram = renderContext.webGLSupport.useProgram(
       vertexShader,
       fragmentShader
     ) as TransitionEventWebGLProgram
     if (!program.info || this.dirty) {
-      const entryCount = (this.entryCount = this.entries.length)
+      const entryCount = this.entries.length
       const vertexCount = entryCount * 6
       if (program.info) {
         program.info.dispose(gl, program)
         renderContext.webGLSupport.deleteProgram(program)
+
+        program = renderContext.webGLSupport.useProgram(
+          vertexShader,
+          fragmentShader
+        ) as TransitionEventWebGLProgram
       }
 
       program.info = new TransitionEventProgramInfo(vertexCount)
@@ -514,42 +501,33 @@ export class TransitionEventVisual extends WebGLVisual {
       }
     })
     this.dirty = false
-    this.timeDirty = false
-  }
-
-  get needsRepaint(): boolean {
-    return (this.entryCount > 0 && this.timeDirty) || (this.dirty && this.entries.length > 0)
   }
 }
 
-class TransitionEventCanvasObjectDescriptor extends BaseClass(IObjectRenderer, IVisualCreator) {
+class TransitionEventItemRenderer extends BaseClass(IObjectRenderer, IVisualCreator) {
   private transitionEventVisual: TransitionEventVisual | null = null
-  getBoundsProvider(forUserObject: unknown): IBoundsProvider {
+  getBoundsProvider(_: unknown): IBoundsProvider {
     return IBoundsProvider.UNBOUNDED
   }
 
-  getHitTestable(forUserObject: unknown): IHitTestable {
+  getHitTestable(_: unknown): IHitTestable {
     return IHitTestable.NEVER
   }
 
-  getVisibilityTestable(forUserObject: unknown): IVisibilityTestable {
+  getVisibilityTestable(_: unknown): IVisibilityTestable {
     return IVisibilityTestable.ALWAYS
   }
 
-  getVisualCreator(forUserObject: unknown): IVisualCreator {
-    this.transitionEventVisual = forUserObject as TransitionEventVisual
+  getVisualCreator(renderTag: unknown): IVisualCreator {
+    this.transitionEventVisual = renderTag as TransitionEventVisual
     return this
   }
 
-  isDirty(context: ICanvasContext, canvasObject: IRenderTreeElement): boolean {
-    return canvasObject.dirty || (canvasObject.tag as TransitionEventVisual).needsRepaint
-  }
-
-  createVisual(context: IRenderContext): Visual | null {
+  createVisual(_: IRenderContext): Visual | null {
     return this.transitionEventVisual
   }
 
-  updateVisual(context: IRenderContext, oldVisual: Visual | null): Visual | null {
+  updateVisual(_: IRenderContext, __: Visual | null): Visual | null {
     return this.transitionEventVisual
   }
 }

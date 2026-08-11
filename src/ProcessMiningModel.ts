@@ -1,8 +1,9 @@
 import { GraphComponent } from '@yfiles/yfiles'
 import { ExportSettings, PrintSettings } from '@yworks/react-yfiles-core'
-import { ProcessStep, Transition } from './core/process-graph-extraction.ts'
+import { type ProcessStep, type Transition } from './core/process-graph-extraction.ts'
 import { ActivityEvent, LayoutOptions } from './ProcessMining.tsx'
 import { TransitionEventVisualSupport } from './styles/TransitionEventVisual.ts'
+import { MutableRefObject } from 'react'
 
 /**
  * The ProcessMiningModel provides common functionality to interact with the {@link ProcessMining} component.
@@ -100,8 +101,9 @@ export interface ProcessMiningModel {
   refresh(): void
 }
 
-export interface ProcessMiningModelInternal<TEvent extends ActivityEvent>
-  extends ProcessMiningModel {
+export interface ProcessMiningModelInternal<
+  TEvent extends ActivityEvent
+> extends ProcessMiningModel {
   onRendered: () => void
   showTransitionEvents: boolean
   eventLog: TEvent[]
@@ -109,5 +111,5 @@ export interface ProcessMiningModelInternal<TEvent extends ActivityEvent>
     previousEvent: TEvent,
     nextEvent: TEvent
   ) => { size: number; hue: number }
-  transitionEventVisualSupport: TransitionEventVisualSupport
+  transitionEventVisualSupportRef: MutableRefObject<TransitionEventVisualSupport | null>
 }

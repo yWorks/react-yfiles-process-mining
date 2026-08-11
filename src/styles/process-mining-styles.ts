@@ -6,7 +6,7 @@ import {
   ReactComponentHtmlNodeStyle,
   RenderNodeProps
 } from '@yworks/react-yfiles-core'
-import { getProcessStepData, ProcessStep } from '../core/process-graph-extraction.ts'
+import { getProcessStepData, type ProcessStep } from '../core/process-graph-extraction.ts'
 import { RenderProcessStep, RenderProcessStepProps } from './RenderProcessStep.tsx'
 import { TransitionStyleProvider } from '../ProcessMining.tsx'
 

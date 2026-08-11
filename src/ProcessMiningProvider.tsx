@@ -10,19 +10,23 @@ import {
 } from '@yworks/react-yfiles-core'
 import { ProcessMiningModel, ProcessMiningModelInternal } from './ProcessMiningModel.ts'
 import {
+  Command,
   GraphComponent,
   HierarchicalLayout,
   HierarchicalLayoutData,
   HierarchicalLayoutEdgeDescriptor,
   HierarchicalLayoutRoutingStyle,
-  RoutingStyleDescriptor,
-  Command,
   IGraph,
   INode,
+  Insets,
   MutableRectangle,
-  Insets
+  RoutingStyleDescriptor
 } from '@yfiles/yfiles'
-import { getProcessStepData, ProcessStep, Transition } from './core/process-graph-extraction.ts'
+import {
+  getProcessStepData,
+  type ProcessStep,
+  type Transition
+} from './core/process-graph-extraction.ts'
 import { AnimationController } from './animation/AnimationController.ts'
 import { ActivityEvent, LayoutOptions } from './ProcessMining.tsx'
 import { TransitionEventVisualSupport } from './styles/TransitionEventVisual.ts'
@@ -201,7 +205,7 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
     previousEvent: TEvent,
     nextEvent: TEvent
   ) => { size: number; hue: number }
-  let _transitionEventVisualSupport: TransitionEventVisualSupport
+  let _transitionEventVisualSupportRef: React.MutableRefObject<TransitionEventVisualSupport>
 
   return {
     graphComponent,
@@ -220,8 +224,10 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
       _transitionEventStyling = value
     },
 
-    set transitionEventVisualSupport(value: TransitionEventVisualSupport) {
-      _transitionEventVisualSupport = value
+    set transitionEventVisualSupportRef(
+      value: React.MutableRefObject<TransitionEventVisualSupport>
+    ) {
+      _transitionEventVisualSupportRef = value
     },
 
     async startAnimation(
@@ -241,6 +247,7 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
     },
 
     async applyLayout(layoutOptions = defaultLayoutOptions, morphLayout = false) {
+      const _transitionEventVisualSupport = _transitionEventVisualSupportRef.current
       if (_showTransitionEvents && _eventLog) {
         _transitionEventVisualSupport.hideVisual(graphComponent)
         _transitionEventVisualSupport.clearItems()

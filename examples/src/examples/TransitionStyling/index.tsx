@@ -1,4 +1,8 @@
-import { ProcessMining, TransitionStyle, ProcessStep } from '@yworks/react-yfiles-process-mining'
+import {
+  ProcessMining,
+  TransitionStyle,
+  type ProcessStep
+} from '@yworks/react-yfiles-process-mining'
 import EventLog from '../../data/EventLog.ts'
 import './index.css'
 

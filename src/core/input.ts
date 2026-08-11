@@ -9,7 +9,7 @@ import {
 } from '@yfiles/yfiles'
 import { enableSingleSelection } from './SingleSelectionHelper.ts'
 import { ProcessMiningModel } from '../ProcessMiningModel.ts'
-import { getProcessStepData, ProcessStep } from './process-graph-extraction.ts'
+import { getProcessStepData, type ProcessStep } from './process-graph-extraction.ts'
 import { enableSmartClickNavigation } from './configure-smart-click-navigation.ts'
 import type { TransitionEventVisualSupport } from '../styles/TransitionEventVisual.ts'
 import type { TransitionEventsClickedListener } from '../ProcessMining.tsx'

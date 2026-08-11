@@ -1,4 +1,4 @@
-import { ProcessStep, Transition } from '../core/process-graph-extraction.ts'
+import { type ProcessStep, type Transition } from '../core/process-graph-extraction.ts'
 import { RenderPopupProps as RenderPopupPropsBase } from '@yworks/react-yfiles-core'
 
 /**

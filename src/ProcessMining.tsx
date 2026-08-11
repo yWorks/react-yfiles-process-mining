@@ -6,6 +6,7 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState
 } from 'react'
 import {
@@ -61,7 +62,10 @@ import {
   updateNodeStyles
 } from './styles/process-mining-styles.ts'
 import { addHeatmap } from './core/heatmap.ts'
-import { createTransitionEventVisualSupport } from './styles/TransitionEventVisual.ts'
+import {
+  createTransitionEventVisualSupport,
+  TransitionEventVisualSupport
+} from './styles/TransitionEventVisual.ts'
 import { RenderProcessStepProps } from './styles/RenderProcessStep.tsx'
 import { RenderTooltipProps } from './components/ProcessMiningTooltip.tsx'
 import { RenderPopupProps } from './components/ProcessMiningPopup.tsx'
@@ -177,8 +181,9 @@ export interface LayoutOptions {
 /**
  * The props passed to the process mining context-menu component for rendering the context-menu.
  */
-export interface RenderContextMenuProps
-  extends RenderContextMenuPropsBase<ProcessStep | Transition> {
+export interface RenderContextMenuProps extends RenderContextMenuPropsBase<
+  ProcessStep | Transition
+> {
   /**
    * The current timestamp of the {@link ProcessMining} component.
    */
@@ -407,6 +412,7 @@ const ProcessMiningCore = withGraphComponent(
     const [, setEdgeData] = useState<Transition[]>([])
     const { nodeInfos, setNodeInfos } = useReactNodeRendering<ProcessStep>()
 
+    const transitionEventVisualSupportRef = useRef<TransitionEventVisualSupport | null>(null)
     const transitionEventVisualSupport = useMemo(() => {
       initializeNodeDefaultStyle(graphComponent, setNodeInfos, itemSize)
       initializeEdgeDefaultStyle(graphComponent)
@@ -414,10 +420,11 @@ const ProcessMiningCore = withGraphComponent(
       initializeInputMode(graphComponent, processMiningModel, smartClickNavigation)
       const transitionEventVisualSupport = createTransitionEventVisualSupport(graphComponent)
       if (isInternalProcessMiningModel(processMiningModel)) {
-        processMiningModel.transitionEventVisualSupport = transitionEventVisualSupport
+        processMiningModel.transitionEventVisualSupportRef = transitionEventVisualSupportRef
       }
       return transitionEventVisualSupport
     }, [])
+    transitionEventVisualSupportRef.current = transitionEventVisualSupport
 
     useEffect(() => {
       checkStylesheetLoaded(graphComponent.htmlElement, 'react-yfiles-process-mining')

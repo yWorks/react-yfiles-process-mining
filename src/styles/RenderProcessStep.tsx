@@ -1,5 +1,5 @@
 import { RenderNodeProps as RenderProcessStepPropsBase } from '@yworks/react-yfiles-core'
-import { ProcessStep } from '../core/process-graph-extraction.ts'
+import { type ProcessStep } from '../core/process-graph-extraction.ts'
 import { RenderHeatGauge } from './RenderHeatGauge.tsx'
 import { ProcessMining } from '../ProcessMining.tsx'
 import './RenderProcessStep.css'
