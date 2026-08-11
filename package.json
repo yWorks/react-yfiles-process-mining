@@ -55,7 +55,7 @@
   "devDependencies": {
     "@types/react": ">=18",
     "@types/react-dom": ">=18",
-    "@microsoft/api-extractor": "^7.55.2",
+    "@microsoft/api-extractor": "^7.58.12",
     "tsdown": "^0.22.14",
     "@tsdown/css": "^0.22.14",
     "typescript": "^6.0.3"
