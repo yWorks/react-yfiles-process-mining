@@ -446,12 +446,12 @@ const ProcessMiningCore = withGraphComponent(
     }, [transitionStyles])
 
     useEffect(() => {
-      let heatMapCanvasObject: IRenderTreeElement | null = null
+      let heatMapTreeElement: IRenderTreeElement | null = null
 
       if (showHeatmap) {
         // this function provides the heat for a node or edge at a specific time
         // it is used to update the heat map or the node decoration
-        heatMapCanvasObject = addHeatmap(graphComponent, (item: INode | IEdge): number => {
+        heatMapTreeElement = addHeatmap(graphComponent, (item: INode | IEdge): number => {
           // we define the heat as the ratio of the current heat value to the item's capacity,
           // but not more than 1
           const data = item instanceof INode ? getProcessStepData(item) : getTransitionData(item)
@@ -460,9 +460,9 @@ const ProcessMiningCore = withGraphComponent(
       }
 
       return () => {
-        if (heatMapCanvasObject) {
-          heatMapCanvasObject.renderTree.remove(heatMapCanvasObject)
-          heatMapCanvasObject = null
+        if (heatMapTreeElement) {
+          heatMapTreeElement.renderTree.remove(heatMapTreeElement)
+          heatMapTreeElement = null
         }
       }
     }, [graphComponent, showHeatmap, timestamp])
