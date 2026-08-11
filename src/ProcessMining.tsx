@@ -285,14 +285,7 @@ export interface ProcessMiningProps<TEvent extends ActivityEvent, TNeedle> {
    * The optional position of the popup. The default is 'top'.
    */
   popupPosition?:
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'top'
-    | 'top-right'
-    | 'top-left'
-    | 'bottom-right'
-    | 'bottom-left'
+    'bottom' | 'left' | 'right' | 'top' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
   /**
    * An optional component used for rendering a custom popup.
    */
@@ -567,12 +560,36 @@ const ProcessMiningCore = withGraphComponent(
       graphComponent.fitGraphBounds()
     }, [finishedInitialMeasurement])
 
+    const {
+      direction,
+      minimumLayerDistance,
+      nodeToNodeDistance,
+      nodeToEdgeDistance,
+      maximumDuration,
+      edgeGrouping
+    } = layoutOptions ?? {}
+
     useEffect(() => {
       // apply a layout after the first measurement if the layout options change
       if (finishedInitialMeasurement) {
-        void processMiningModel.applyLayout(layoutOptions, true)
+        const options: LayoutOptions = {
+          direction,
+          minimumLayerDistance,
+          nodeToNodeDistance,
+          nodeToEdgeDistance,
+          maximumDuration,
+          edgeGrouping
+        }
+        void processMiningModel.applyLayout(options, true)
       }
-    }, [layoutOptions])
+    }, [
+      direction,
+      minimumLayerDistance,
+      nodeToNodeDistance,
+      nodeToEdgeDistance,
+      maximumDuration,
+      edgeGrouping
+    ])
 
     const [measureTrigger, setMeasureTrigger] = useState(false)
     useEffect(() => {
