@@ -1,9 +1,9 @@
-import { GraphComponent } from '@yfiles/yfiles'
-import { ExportSettings, PrintSettings } from '@yworks/react-yfiles-core'
+import type { GraphComponent } from '@yfiles/yfiles'
+import type { ExportSettings, PrintSettings } from '@yworks/react-yfiles-core'
 import { type ProcessStep, type Transition } from './core/process-graph-extraction.ts'
-import { ActivityEvent, LayoutOptions } from './ProcessMining.tsx'
-import { TransitionEventVisualSupport } from './styles/TransitionEventVisual.ts'
-import { MutableRefObject } from 'react'
+import type { ActivityEvent, LayoutOptions } from './ProcessMining.tsx'
+import type { TransitionEventVisualSupport } from './styles/TransitionEventVisual.ts'
+import type { MutableRefObject } from 'react'
 
 /**
  * The ProcessMiningModel provides common functionality to interact with the {@link ProcessMining} component.

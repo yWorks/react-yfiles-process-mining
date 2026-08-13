@@ -1,14 +1,14 @@
 import {
-  ClickEventArgs,
+  type ClickEventArgs,
   type GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  HoveredItemChangedEventArgs,
+  type HoveredItemChangedEventArgs,
   INode,
-  ItemHoverInputMode
+  type ItemHoverInputMode
 } from '@yfiles/yfiles'
 import { enableSingleSelection } from './SingleSelectionHelper.ts'
-import { ProcessMiningModel } from '../ProcessMiningModel.ts'
+import type { ProcessMiningModel } from '../ProcessMiningModel.ts'
 import { getProcessStepData, type ProcessStep } from './process-graph-extraction.ts'
 import { enableSmartClickNavigation } from './configure-smart-click-navigation.ts'
 import type { TransitionEventVisualSupport } from '../styles/TransitionEventVisual.ts'
@@ -46,7 +46,7 @@ export function initializeInputMode(
 export function initializeHover(
   onHover: ((item: ProcessStep | null, oldItem?: ProcessStep | null) => void) | undefined,
   graphComponent: GraphComponent
-) {
+): (evt: HoveredItemChangedEventArgs, _: ItemHoverInputMode) => void {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   const hoverItemChangedListener = (
@@ -79,7 +79,7 @@ export function initializeTransitionEventsClick(
   onTransitionEventsClick: TransitionEventsClickedListener | undefined,
   graphComponent: GraphComponent,
   transitionEventVisualSupport: TransitionEventVisualSupport
-) {
+): (evt: ClickEventArgs, _: GraphViewerInputMode) => void {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
   const transitionEventsClickedListener = (evt: ClickEventArgs, _: GraphViewerInputMode): void => {
     if (onTransitionEventsClick) {
@@ -101,11 +101,11 @@ export function initializeTransitionEventsClick(
 export function initializeFocus(
   onFocus: ((item: ProcessStep | null) => void) | undefined,
   graphComponent: GraphComponent
-) {
-  let currentItemChangedListener = () => {}
+): () => void {
+  let currentItemChangedListener = (): void => {}
   if (onFocus) {
     // display information about the current employee
-    currentItemChangedListener = () => {
+    currentItemChangedListener = (): void => {
       const currentItem = graphComponent.currentItem
       if (currentItem instanceof INode) {
         onFocus(getProcessStepData(currentItem))
@@ -125,11 +125,11 @@ export function initializeFocus(
 export function initializeSelection(
   onSelect: ((selectedItems: ProcessStep[]) => void) | undefined,
   graphComponent: GraphComponent
-) {
-  let itemSelectionChangedListener = () => {}
+): () => void {
+  let itemSelectionChangedListener = (): void => {}
   if (onSelect) {
     // display information about the current employee
-    itemSelectionChangedListener = () => {
+    itemSelectionChangedListener = (): void => {
       const selectedItems = graphComponent.selection.nodes
         .map(node => getProcessStepData(node))
         .toArray()

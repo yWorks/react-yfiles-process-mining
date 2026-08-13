@@ -1,5 +1,7 @@
 import {
-  ControlButton,
+  type ControlButton,
+  type Controls,
+  type ControlsProps,
   DefaultControlButtons as ControlButtonsBase
 } from '@yworks/react-yfiles-core'
 

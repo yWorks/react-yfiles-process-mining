@@ -1,11 +1,11 @@
 import {
   type GraphComponent,
-  GraphViewerInputMode,
+  type GraphViewerInputMode,
   IEdge,
-  IModelItem,
+  type IModelItem,
   INode,
-  ItemClickedEventArgs,
-  Point
+  type ItemClickedEventArgs,
+  type Point
 } from '@yfiles/yfiles'
 
 /**
@@ -26,7 +26,7 @@ export function enableSmartClickNavigation(
   graphInputMode: GraphViewerInputMode,
   graphComponent: GraphComponent,
   mode: 'zoom-to-mouse-location' | 'zoom-to-viewport-center' = 'zoom-to-viewport-center'
-) {
+): void {
   graphInputMode.addEventListener(
     'item-left-clicked',
     async (event: ItemClickedEventArgs<IModelItem>): Promise<void> => {

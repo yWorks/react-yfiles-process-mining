@@ -1,7 +1,7 @@
-import { IEnumerable, IGraph } from '@yfiles/yfiles'
-import { ActivityEvent } from '../ProcessMining.tsx'
+import { IEnumerable, type IGraph } from '@yfiles/yfiles'
+import type { ActivityEvent } from '../ProcessMining.tsx'
 import { getProcessStepData, getTransitionData } from './process-graph-extraction.ts'
-import { TransitionEventVisualSupport } from '../styles/TransitionEventVisual.ts'
+import type { TransitionEventVisualSupport } from '../styles/TransitionEventVisual.ts'
 
 /**
  * Prepares the graph for the visualization of heat and events.
