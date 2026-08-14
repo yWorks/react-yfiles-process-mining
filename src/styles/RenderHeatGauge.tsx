@@ -1,3 +1,5 @@
+import type { JSX } from 'react'
+
 /**
  * The properties required to render a heat gauge component.
  */
@@ -39,7 +41,7 @@ export interface RenderHeatGaugeProps {
  * }
  * ```
  */
-export function RenderHeatGauge({ heat, size }: RenderHeatGaugeProps) {
+export function RenderHeatGauge({ heat, size }: RenderHeatGaugeProps): JSX.Element {
   const { cx, cy, r, thickness } = getCircleLayout(size)
   const currentHeat = heat ?? 0.8
 

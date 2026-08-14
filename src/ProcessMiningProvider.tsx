@@ -1,31 +1,38 @@
-import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
+import type { JSX, PropsWithChildren} from 'react';
+import { createContext, useContext, useMemo } from 'react'
+import type {
+  ExportSettings,
+  PrintSettings} from '@yworks/react-yfiles-core';
 import {
   exportImageAndSave,
-  ExportSettings,
   exportSvgAndSave,
   printDiagram,
-  PrintSettings,
   useGraphComponent,
   withGraphComponentProvider
 } from '@yworks/react-yfiles-core'
-import { ProcessMiningModel, ProcessMiningModelInternal } from './ProcessMiningModel.ts'
-import {
+import type { ProcessMiningModel, ProcessMiningModelInternal } from './ProcessMiningModel.ts'
+import type {
   GraphComponent,
+  IGraph,
+  INode} from '@yfiles/yfiles';
+import {
+  Command,
   HierarchicalLayout,
   HierarchicalLayoutData,
   HierarchicalLayoutEdgeDescriptor,
   HierarchicalLayoutRoutingStyle,
-  RoutingStyleDescriptor,
-  Command,
-  IGraph,
-  INode,
+  Insets,
   MutableRectangle,
-  Insets
+  RoutingStyleDescriptor
 } from '@yfiles/yfiles'
-import { getProcessStepData, ProcessStep, Transition } from './core/process-graph-extraction.ts'
+import {
+  getProcessStepData,
+  type ProcessStep,
+  type Transition
+} from './core/process-graph-extraction.ts'
 import { AnimationController } from './animation/AnimationController.ts'
-import { ActivityEvent, LayoutOptions } from './ProcessMining.tsx'
-import { TransitionEventVisualSupport } from './styles/TransitionEventVisual.ts'
+import type { ActivityEvent, LayoutOptions } from './ProcessMining.tsx'
+import type { TransitionEventVisualSupport } from './styles/TransitionEventVisual.ts'
 import { prepareProcessVisualization } from './core/process-visualization.ts'
 
 const ProcessMiningContext = createContext<ProcessMiningModel | null>(null)
@@ -118,8 +125,8 @@ export function useProcessMiningContext(): ProcessMiningModel {
  * }
  * ```
  */
-export const ProcessMiningProvider = withGraphComponentProvider(
-  ({ children }: PropsWithChildren) => {
+export const ProcessMiningProvider: (props: PropsWithChildren) => JSX.Element =
+  withGraphComponentProvider(({ children }: PropsWithChildren) => {
     const graphComponent = useGraphComponent()
 
     if (!graphComponent) {
@@ -135,8 +142,7 @@ export const ProcessMiningProvider = withGraphComponentProvider(
         {children}
       </ProcessMiningContext.Provider>
     )
-  }
-)
+  })
 
 const defaultMargins = { top: 5, right: 5, left: 5, bottom: 5 }
 
@@ -159,10 +165,10 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
 
   // this is a hack, so we have something like `await nextTick()`
   // that we can use instead of `setTimeout()`
-  const setRenderedCallback = (cb: () => void) => {
+  const setRenderedCallback = (cb: () => void): void => {
     onRenderedCallback = cb
   }
-  const onRendered = () => {
+  const onRendered = (): void => {
     onRenderedCallback?.()
     onRenderedCallback = null
   }
@@ -170,7 +176,7 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
   // initialize the animation
   const animationController = new AnimationController(graphComponent)
 
-  function zoomTo(items: (ProcessStep | Transition)[]) {
+  function zoomTo(items: (ProcessStep | Transition)[]): void {
     if (items.length === 0) {
       return
     }
@@ -201,7 +207,7 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
     previousEvent: TEvent,
     nextEvent: TEvent
   ) => { size: number; hue: number }
-  let _transitionEventVisualSupport: TransitionEventVisualSupport
+  let _transitionEventVisualSupportRef: React.MutableRefObject<TransitionEventVisualSupport>
 
   return {
     graphComponent,
@@ -220,8 +226,10 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
       _transitionEventStyling = value
     },
 
-    set transitionEventVisualSupport(value: TransitionEventVisualSupport) {
-      _transitionEventVisualSupport = value
+    set transitionEventVisualSupportRef(
+      value: React.MutableRefObject<TransitionEventVisualSupport>
+    ) {
+      _transitionEventVisualSupportRef = value
     },
 
     async startAnimation(
@@ -241,6 +249,7 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
     },
 
     async applyLayout(layoutOptions = defaultLayoutOptions, morphLayout = false) {
+      const _transitionEventVisualSupport = _transitionEventVisualSupportRef.current
       if (_showTransitionEvents && _eventLog) {
         _transitionEventVisualSupport.hideVisual(graphComponent)
         _transitionEventVisualSupport.clearItems()
@@ -278,7 +287,7 @@ export function createProcessMiningModel<TEvent extends ActivityEvent>(
         prepareProcessVisualization(
           graphComponent.graph,
           _eventLog,
-          _transitionEventStyling ?? (() => ({ size: 7, hue: 200 })),
+          _transitionEventStyling ?? ((): { size: number; hue: number } => ({ size: 7, hue: 200 })),
           _transitionEventVisualSupport
         )
       }

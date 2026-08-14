@@ -1,7 +1,8 @@
-import { RenderNodeProps as RenderProcessStepPropsBase } from '@yworks/react-yfiles-core'
-import { ProcessStep } from '../core/process-graph-extraction.ts'
+import type { RenderNodeProps as RenderProcessStepPropsBase } from '@yworks/react-yfiles-core'
+import { type ProcessStep } from '../core/process-graph-extraction.ts'
 import { RenderHeatGauge } from './RenderHeatGauge.tsx'
 import { ProcessMining } from '../ProcessMining.tsx'
+import type { JSX } from 'react'
 import './RenderProcessStep.css'
 
 /**
@@ -63,7 +64,7 @@ export function RenderProcessStep({
   focused,
   selected,
   timestamp
-}: RenderProcessStepProps) {
+}: RenderProcessStepProps): JSX.Element {
   const heat = Math.min(1, (dataItem.heat?.getValue(timestamp) ?? 0) / (dataItem.capacity ?? 100))
   const currentHeat = Math.floor((heat ?? 0) * 30) / 30
   const gaugeSize = 43

@@ -1,5 +1,6 @@
-import { ProcessStep, Transition } from '../core/process-graph-extraction.ts'
-import { RenderTooltipProps as RenderTooltipPropsBase } from '@yworks/react-yfiles-core'
+import { type ProcessStep, type Transition } from '../core/process-graph-extraction.ts'
+import type { RenderTooltipProps as RenderTooltipPropsBase } from '@yworks/react-yfiles-core'
+import type { JSX } from 'react'
 
 /**
  * The props passed to the process mining tooltip component for rendering the tooltip.
@@ -26,7 +27,7 @@ export interface RenderTooltipProps extends RenderTooltipPropsBase<ProcessStep |
  * @param data - The process step or transition element to show the tooltip for.
  * @param timestamp - The current timestamp of the process mining component.
  */
-export function RenderTooltip({ data, timestamp }: RenderTooltipProps) {
+export function RenderTooltip({ data, timestamp }: RenderTooltipProps): JSX.Element {
   let label = ''
   if ('sourceLabel' in data && 'targetLabel' in data) {
     label = `${data.sourceLabel} → ${data.targetLabel}`

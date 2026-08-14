@@ -7,7 +7,7 @@ export * from './components/ProcessMiningControlButtons.tsx'
 export * from './components/ProcessMiningTooltip.tsx'
 export * from './components/ProcessMiningPopup.tsx'
 export { type ProcessMiningModel } from './ProcessMiningModel'
-export { ProcessStep, Transition } from './core/process-graph-extraction.ts'
+export { type ProcessStep, type Transition } from './core/process-graph-extraction.ts'
 export {
   type EdgeStyle as TransitionStyle,
   type RenderControlsProps,

@@ -1,43 +1,48 @@
-import {
+import type {
   ComponentType,
   CSSProperties,
   PropsWithChildren,
-  ReactElement,
+  ReactElement} from 'react';
+import {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState
 } from 'react'
+import type {
+  ContextMenuItemProvider,
+  EdgeStyle as TransitionStyle,
+  RenderContextMenuProps as RenderContextMenuPropsBase,
+  RenderPopupProps as RenderPopupPropsBase,
+  RenderTooltipProps as RenderTooltipPropsBase} from '@yworks/react-yfiles-core';
 import {
   checkLicense,
   checkStylesheetLoaded,
   ContextMenu,
-  ContextMenuItemProvider,
-  EdgeStyle as TransitionStyle,
   LicenseError,
   Popup,
   ReactNodeRendering,
-  RenderContextMenuProps as RenderContextMenuPropsBase,
-  RenderPopupProps as RenderPopupPropsBase,
-  RenderTooltipProps as RenderTooltipPropsBase,
   Tooltip,
   useGraphSearch,
   useReactNodeRendering,
   withGraphComponent
 } from '@yworks/react-yfiles-core'
-import {
+import type {
   ClickEventArgs,
   GraphViewerInputMode,
   IEdge,
-  INode,
   IRenderTreeElement
+} from '@yfiles/yfiles';
+import {
+  INode
 } from '@yfiles/yfiles'
 import {
   ProcessMiningProvider,
   useProcessMiningContext,
   useProcessMiningContextInternal
 } from './ProcessMiningProvider'
-import { ProcessMiningModel, ProcessMiningModelInternal } from './ProcessMiningModel.ts'
+import type { ProcessMiningModel, ProcessMiningModelInternal } from './ProcessMiningModel.ts'
 import {
   initializeFocus,
   initializeHover,
@@ -45,12 +50,14 @@ import {
   initializeSelection,
   initializeTransitionEventsClick
 } from './core/input.ts'
+import type {
+  ProcessStep,
+  Transition
+} from './core/process-graph-extraction.ts';
 import {
   extractGraph,
   getProcessStepData,
-  getTransitionData,
-  ProcessStep,
-  Transition
+  getTransitionData
 } from './core/process-graph-extraction.ts'
 import './styles/process-mining.css'
 import {
@@ -61,10 +68,15 @@ import {
   updateNodeStyles
 } from './styles/process-mining-styles.ts'
 import { addHeatmap } from './core/heatmap.ts'
-import { createTransitionEventVisualSupport } from './styles/TransitionEventVisual.ts'
-import { RenderProcessStepProps } from './styles/RenderProcessStep.tsx'
-import { RenderTooltipProps } from './components/ProcessMiningTooltip.tsx'
-import { RenderPopupProps } from './components/ProcessMiningPopup.tsx'
+import type {
+  TransitionEventVisualSupport
+} from './styles/TransitionEventVisual.ts';
+import {
+  createTransitionEventVisualSupport
+} from './styles/TransitionEventVisual.ts'
+import type { RenderProcessStepProps } from './styles/RenderProcessStep.tsx'
+import type { RenderTooltipProps } from './components/ProcessMiningTooltip.tsx'
+import type { RenderPopupProps } from './components/ProcessMiningPopup.tsx'
 
 /**
  * The id of the entity that passes through the process steps
@@ -177,8 +189,9 @@ export interface LayoutOptions {
 /**
  * The props passed to the process mining context-menu component for rendering the context-menu.
  */
-export interface RenderContextMenuProps
-  extends RenderContextMenuPropsBase<ProcessStep | Transition> {
+export interface RenderContextMenuProps extends RenderContextMenuPropsBase<
+  ProcessStep | Transition
+> {
   /**
    * The current timestamp of the {@link ProcessMining} component.
    */
@@ -280,14 +293,7 @@ export interface ProcessMiningProps<TEvent extends ActivityEvent, TNeedle> {
    * The optional position of the popup. The default is 'top'.
    */
   popupPosition?:
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'top'
-    | 'top-right'
-    | 'top-left'
-    | 'bottom-right'
-    | 'bottom-left'
+    'bottom' | 'left' | 'right' | 'top' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
   /**
    * An optional component used for rendering a custom popup.
    */
@@ -396,7 +402,7 @@ const ProcessMiningCore = withGraphComponent(
     renderContextMenu,
     popupPosition,
     renderPopup,
-    transitionEventStyling = () => ({ size: 7, hue: 200 }),
+    transitionEventStyling = (): { size: number; hue: number } => ({ size: 7, hue: 200 }),
     smartClickNavigation,
     layoutOptions
   }: ProcessMiningProps<TEvent, TNeedle> & PropsWithChildren) => {
@@ -407,6 +413,7 @@ const ProcessMiningCore = withGraphComponent(
     const [, setEdgeData] = useState<Transition[]>([])
     const { nodeInfos, setNodeInfos } = useReactNodeRendering<ProcessStep>()
 
+    const transitionEventVisualSupportRef = useRef<TransitionEventVisualSupport | null>(null)
     const transitionEventVisualSupport = useMemo(() => {
       initializeNodeDefaultStyle(graphComponent, setNodeInfos, itemSize)
       initializeEdgeDefaultStyle(graphComponent)
@@ -414,10 +421,11 @@ const ProcessMiningCore = withGraphComponent(
       initializeInputMode(graphComponent, processMiningModel, smartClickNavigation)
       const transitionEventVisualSupport = createTransitionEventVisualSupport(graphComponent)
       if (isInternalProcessMiningModel(processMiningModel)) {
-        processMiningModel.transitionEventVisualSupport = transitionEventVisualSupport
+        processMiningModel.transitionEventVisualSupportRef = transitionEventVisualSupportRef
       }
       return transitionEventVisualSupport
     }, [])
+    transitionEventVisualSupportRef.current = transitionEventVisualSupport
 
     useEffect(() => {
       checkStylesheetLoaded(graphComponent.htmlElement, 'react-yfiles-process-mining')
@@ -446,12 +454,12 @@ const ProcessMiningCore = withGraphComponent(
     }, [transitionStyles])
 
     useEffect(() => {
-      let heatMapCanvasObject: IRenderTreeElement | null = null
+      let heatMapTreeElement: IRenderTreeElement | null = null
 
       if (showHeatmap) {
         // this function provides the heat for a node or edge at a specific time
         // it is used to update the heat map or the node decoration
-        heatMapCanvasObject = addHeatmap(graphComponent, (item: INode | IEdge): number => {
+        heatMapTreeElement = addHeatmap(graphComponent, (item: INode | IEdge): number => {
           // we define the heat as the ratio of the current heat value to the item's capacity,
           // but not more than 1
           const data = item instanceof INode ? getProcessStepData(item) : getTransitionData(item)
@@ -459,10 +467,10 @@ const ProcessMiningCore = withGraphComponent(
         })
       }
 
-      return () => {
-        if (heatMapCanvasObject) {
-          heatMapCanvasObject.renderTree.remove(heatMapCanvasObject)
-          heatMapCanvasObject = null
+      return (): void => {
+        if (heatMapTreeElement) {
+          heatMapTreeElement.renderTree.remove(heatMapTreeElement)
+          heatMapTreeElement = null
         }
       }
     }, [graphComponent, showHeatmap, timestamp])
@@ -495,7 +503,7 @@ const ProcessMiningCore = withGraphComponent(
     useEffect(() => {
       const hoverItemChangedListener = initializeHover(onItemHover, graphComponent)
 
-      return () => {
+      return (): void => {
         // clean up
         hoverItemChangedListener &&
           (graphComponent.inputMode as GraphViewerInputMode).itemHoverInputMode.removeEventListener(
@@ -519,7 +527,7 @@ const ProcessMiningCore = withGraphComponent(
         )
       }
 
-      return () => {
+      return (): void => {
         // clean up
         if (transitionEventsClickedListener) {
           ;(graphComponent.inputMode as GraphViewerInputMode).removeEventListener(
@@ -539,7 +547,7 @@ const ProcessMiningCore = withGraphComponent(
       const currentItemChangedListener = initializeFocus(onItemFocus, graphComponent)
       const selectedItemChangedListener = initializeSelection(onItemSelect, graphComponent)
 
-      return () => {
+      return (): void => {
         // clean up the listeners
         currentItemChangedListener &&
           graphComponent.removeEventListener('current-item-changed', currentItemChangedListener)
@@ -552,7 +560,8 @@ const ProcessMiningCore = withGraphComponent(
 
     const graphSearch = useGraphSearch(graphComponent, searchNeedle, onSearch)
     // provide search hits on the context
-    processMiningModel.getSearchHits = () => graphSearch.matchingNodes.map((n: INode) => n.tag)
+    processMiningModel.getSearchHits = (): ProcessStep[] =>
+      graphSearch.matchingNodes.map((n: INode) => n.tag)
 
     // fit graph after initial measurement
     const [finishedInitialMeasurement, setFinishedInitialMeasurement] = useState(false)
@@ -560,12 +569,36 @@ const ProcessMiningCore = withGraphComponent(
       graphComponent.fitGraphBounds()
     }, [finishedInitialMeasurement])
 
+    const {
+      direction,
+      minimumLayerDistance,
+      nodeToNodeDistance,
+      nodeToEdgeDistance,
+      maximumDuration,
+      edgeGrouping
+    } = layoutOptions ?? {}
+
     useEffect(() => {
       // apply a layout after the first measurement if the layout options change
       if (finishedInitialMeasurement) {
-        void processMiningModel.applyLayout(layoutOptions, true)
+        const options: LayoutOptions = {
+          direction,
+          minimumLayerDistance,
+          nodeToNodeDistance,
+          nodeToEdgeDistance,
+          maximumDuration,
+          edgeGrouping
+        }
+        void processMiningModel.applyLayout(options, true)
       }
-    }, [layoutOptions])
+    }, [
+      direction,
+      minimumLayerDistance,
+      nodeToNodeDistance,
+      nodeToEdgeDistance,
+      maximumDuration,
+      edgeGrouping
+    ])
 
     const [measureTrigger, setMeasureTrigger] = useState(false)
     useEffect(() => {

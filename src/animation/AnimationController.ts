@@ -1,4 +1,4 @@
-import { Animator, GraphComponent } from '@yfiles/yfiles'
+import { Animator, type GraphComponent } from '@yfiles/yfiles'
 
 /**
  * This controller manages the animation of the heatmap and transition events.

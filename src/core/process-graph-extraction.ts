@@ -1,5 +1,11 @@
-import { ActivityEvent } from '../ProcessMining.tsx'
-import { GraphComponent, type IEdge, IEnumerable, type INode, LayoutExecutor } from '@yfiles/yfiles'
+import type { ActivityEvent } from '../ProcessMining.tsx'
+import {
+  type GraphComponent,
+  type IEdge,
+  IEnumerable,
+  type INode,
+  LayoutExecutor
+} from '@yfiles/yfiles'
 import { HeatData } from '../styles/HeatData.ts'
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking

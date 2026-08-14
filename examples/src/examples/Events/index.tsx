@@ -1,7 +1,7 @@
 import {
   ProcessMining,
   ProcessMiningProvider,
-  ProcessStep
+  type ProcessStep
 } from '@yworks/react-yfiles-process-mining'
 import EventLog from '../../data/EventLog.ts'
 import { useCallback, useState } from 'react'

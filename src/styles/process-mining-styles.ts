@@ -1,14 +1,14 @@
-import { GraphComponent, PolylineEdgeStyle, Rect, Size } from '@yfiles/yfiles'
-import { ComponentType, Dispatch, SetStateAction } from 'react'
+import { type GraphComponent, PolylineEdgeStyle, Rect, Size } from '@yfiles/yfiles'
+import type { ComponentType, Dispatch, SetStateAction } from 'react'
 import {
   convertToPolylineEdgeStyle,
-  NodeRenderInfo,
+  type NodeRenderInfo,
   ReactComponentHtmlNodeStyle,
-  RenderNodeProps
+  type RenderNodeProps
 } from '@yworks/react-yfiles-core'
-import { getProcessStepData, ProcessStep } from '../core/process-graph-extraction.ts'
-import { RenderProcessStep, RenderProcessStepProps } from './RenderProcessStep.tsx'
-import { TransitionStyleProvider } from '../ProcessMining.tsx'
+import { getProcessStepData, type ProcessStep } from '../core/process-graph-extraction.ts'
+import { RenderProcessStep, type RenderProcessStepProps } from './RenderProcessStep.tsx'
+import type { TransitionStyleProvider } from '../ProcessMining.tsx'
 
 /**
  * Sets style defaults for nodes.
@@ -83,7 +83,7 @@ export function updateNodeStyles(
 export function updateEdgeStyles(
   graphComponent: GraphComponent,
   transitionStyles?: TransitionStyleProvider<ProcessStep>
-) {
+): void {
   if (transitionStyles) {
     graphComponent.graph.edges.forEach(edge => {
       const styleProperties = transitionStyles(

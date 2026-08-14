@@ -1,5 +1,6 @@
-import { ProcessStep, Transition } from '../core/process-graph-extraction.ts'
-import { RenderPopupProps as RenderPopupPropsBase } from '@yworks/react-yfiles-core'
+import { type ProcessStep, type Transition } from '../core/process-graph-extraction.ts'
+import type { RenderPopupProps as RenderPopupPropsBase } from '@yworks/react-yfiles-core'
+import { type JSX } from 'react'
 
 /**
  * The props passed to the process mining popup component for rendering the popup.
@@ -25,7 +26,7 @@ export interface RenderPopupProps extends RenderPopupPropsBase<ProcessStep | Tra
  *
  * @param data - The process step or transition element to show the tooltip for.
  */
-export function RenderPopup({ item, onClose, timestamp }: RenderPopupProps) {
+export function RenderPopup({ item, onClose, timestamp }: RenderPopupProps): JSX.Element {
   let popupContent = ''
   if ('sourceLabel' in item && 'targetLabel' in item) {
     popupContent = `${item.sourceLabel} → ${item.targetLabel}`
